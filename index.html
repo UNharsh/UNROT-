@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -339,7 +339,7 @@
     }
 
     #introVeil {
-      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.7s ease;
+      transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.55s ease;
     }
 
     #introVeil.veil-dismissed {
@@ -456,11 +456,11 @@
 
     <div class="max-w-5xl w-full mx-auto flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6">
       <div class="flex flex-wrap items-center gap-3">
-        <button id="enterAppBtn" class="accent-btn px-7 py-3.5 rounded-full text-sm sm:text-base font-extrabold tracking-tight cursor-pointer inline-flex items-center gap-2 shadow-lg">
+        <button id="enterAppBtn" type="button" class="accent-btn px-7 py-3.5 rounded-full text-sm sm:text-base font-extrabold tracking-tight cursor-pointer inline-flex items-center gap-2 shadow-lg">
           <span>TAP TO UNROT YOUR BRAIN</span>
           <span aria-hidden="true">→</span>
         </button>
-        <button id="replayIntroBtn" class="px-4 py-3 rounded-full text-xs font-mono-code uppercase tracking-wider bg-white/5 hover:bg-white/10 border border-white/15 text-zinc-200 transition cursor-pointer">
+        <button id="replayIntroBtn" type="button" class="px-4 py-3 rounded-full text-xs font-mono-code uppercase tracking-wider bg-white/5 hover:bg-white/10 border border-white/15 text-zinc-200 transition cursor-pointer">
           Replay Intro
         </button>
       </div>
@@ -476,7 +476,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
 
         <div class="flex items-center gap-3">
-          <button id="brandHomeBtn" class="flex items-center gap-2.5 text-left group cursor-pointer">
+          <button id="brandHomeBtn" type="button" class="flex items-center gap-2.5 text-left group cursor-pointer">
             <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 border border-white/15 font-mono-code font-extrabold text-sm group-hover:scale-105 transition">U/R</span>
             <div>
               <div class="font-black tracking-tight text-base sm:text-lg leading-none flex items-center gap-2">
@@ -489,28 +489,28 @@
 
         <nav aria-label="Primary Sections" class="glass-pill-track" id="mainNavTrack">
           <div id="navSlidingPill" class="liquid-pill"></div>
-          <button data-tab="feed" class="nav-tab pill-btn active-pill px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Feed</button>
-          <button data-tab="games" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Games</button>
-          <button data-tab="sprint" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">60s Sprint</button>
-          <button data-tab="profile" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Brain Profile</button>
-          <button data-tab="leaderboard" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Leaderboard</button>
+          <button data-tab="feed" type="button" class="nav-tab pill-btn active-pill px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Feed</button>
+          <button data-tab="games" type="button" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Games</button>
+          <button data-tab="sprint" type="button" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">60s Sprint</button>
+          <button data-tab="profile" type="button" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Brain Profile</button>
+          <button data-tab="leaderboard" type="button" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Leaderboard</button>
         </nav>
 
         <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
           <div class="glass-pill-track" id="themeTrack" title="Visual Theme">
             <div id="themeSlidingPill" class="liquid-pill-sm"></div>
-            <button data-theme-val="bw" class="theme-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">B&amp;W</button>
-            <button data-theme-val="neon" class="theme-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Neon</button>
-            <button data-theme-val="pastel" class="theme-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Pastel</button>
+            <button data-theme-val="bw" type="button" class="theme-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">B&amp;W</button>
+            <button data-theme-val="neon" type="button" class="theme-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Neon</button>
+            <button data-theme-val="pastel" type="button" class="theme-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Pastel</button>
           </div>
 
           <div class="glass-pill-track" id="coachTrack" title="Coach Feedback Tone">
             <div id="coachSlidingPill" class="liquid-pill-sm"></div>
-            <button data-coach-val="roast" class="coach-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Roast</button>
-            <button data-coach-val="chill" class="coach-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Chill</button>
+            <button data-coach-val="roast" type="button" class="coach-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Roast</button>
+            <button data-coach-val="chill" type="button" class="coach-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Chill</button>
           </div>
 
-          <button id="chaosToggleBtn" class="px-3 py-1.5 rounded-full text-[11px] font-mono-code uppercase tracking-wider border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 transition cursor-pointer" title="Toggle Chaos Mode Popups">
+          <button id="chaosToggleBtn" type="button" class="px-3 py-1.5 rounded-full text-[11px] font-mono-code uppercase tracking-wider border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 transition cursor-pointer" title="Toggle Chaos Mode Popups">
             Chaos: OFF
           </button>
         </div>
@@ -571,9 +571,9 @@
                   <span class="text-[11px] font-mono-code uppercase text-zinc-400 hidden sm:inline">Vibe</span>
                   <div class="glass-pill-track" id="feedDiffTrack" title="Feed Difficulty Tier">
                     <div id="feedDiffSlidingPill" class="liquid-pill-sm"></div>
-                    <button data-feed-diff="lowkey" class="feed-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Lowkey</button>
-                    <button data-feed-diff="locked_in" class="feed-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Locked In</button>
-                    <button data-feed-diff="cooked" class="feed-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Cooked</button>
+                    <button data-feed-diff="lowkey" type="button" class="feed-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Lowkey</button>
+                    <button data-feed-diff="locked_in" type="button" class="feed-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Locked In</button>
+                    <button data-feed-diff="cooked" type="button" class="feed-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Cooked</button>
                   </div>
                   <span id="feedClockReadout" class="font-mono-code text-xs sm:text-sm font-bold px-2.5 py-1 rounded-lg bg-black/40 border border-white/10 text-zinc-200">
                     15.0s
@@ -598,7 +598,7 @@
                     <p class="text-sm text-zinc-300 mb-6">
                       Each reel drops a fresh micro-challenge across all 10 brain drills. Stay sharp before the bar runs out.
                     </p>
-                    <button id="startFeedBtn" class="accent-btn px-7 py-3 rounded-full text-sm font-extrabold uppercase tracking-wider cursor-pointer">
+                    <button id="startFeedBtn" type="button" class="accent-btn px-7 py-3 rounded-full text-sm font-extrabold uppercase tracking-wider cursor-pointer">
                       Start Feed Loop
                     </button>
                   </div>
@@ -610,10 +610,10 @@
                   “Scroll less. Notice more.”
                 </div>
                 <div class="flex items-center gap-2">
-                  <button id="stopFeedBtn" class="px-3.5 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/35 text-rose-200 transition cursor-pointer">
+                  <button id="stopFeedBtn" type="button" class="px-3.5 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/35 text-rose-200 transition cursor-pointer">
                     Stop ■
                   </button>
-                  <button id="nextReelBtn" class="px-4 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold transition cursor-pointer">
+                  <button id="nextReelBtn" type="button" class="px-4 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold transition cursor-pointer">
                     Next Reel ↑
                   </button>
                 </div>
@@ -684,7 +684,7 @@
 
         <div id="bentoGridView" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
 
-          <button data-game-select="schulte" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+          <button data-game-select="schulte" type="button" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
             <div>
               <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
                 <span>01 • SCANNING</span>
@@ -699,7 +699,7 @@
             </div>
           </button>
 
-          <button data-game-select="stroop" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+          <button data-game-select="stroop" type="button" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
             <div>
               <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
                 <span>02 • INHIBITION</span>
@@ -714,7 +714,7 @@
             </div>
           </button>
 
-          <button data-game-select="grid" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+          <button data-game-select="grid" type="button" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
             <div>
               <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
                 <span>03 • MEMORY</span>
@@ -729,7 +729,7 @@
             </div>
           </button>
 
-          <button data-game-select="reflex" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+          <button data-game-select="reflex" type="button" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
             <div>
               <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
                 <span>04 • REFLEX</span>
@@ -744,7 +744,7 @@
             </div>
           </button>
 
-          <button data-game-select="logic" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+          <button data-game-select="logic" type="button" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
             <div>
               <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
                 <span>05 • PATTERNS</span>
@@ -759,7 +759,7 @@
             </div>
           </button>
 
-          <button data-game-select="mathblitz" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+          <button data-game-select="mathblitz" type="button" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
             <div>
               <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
                 <span>06 • ARITHMETIC</span>
@@ -774,7 +774,7 @@
             </div>
           </button>
 
-          <button data-game-select="timeblind" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+          <button data-game-select="timeblind" type="button" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
             <div>
               <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
                 <span>07 • TIMING</span>
@@ -789,7 +789,7 @@
             </div>
           </button>
 
-          <button data-game-select="ghosttrack" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+          <button data-game-select="ghosttrack" type="button" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
             <div>
               <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
                 <span>08 • TRACKING</span>
@@ -804,7 +804,7 @@
             </div>
           </button>
 
-          <button data-game-select="mirrortrap" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+          <button data-game-select="mirrortrap" type="button" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
             <div>
               <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
                 <span>09 • ROTATION</span>
@@ -819,7 +819,7 @@
             </div>
           </button>
 
-          <button data-game-select="herdtrap" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+          <button data-game-select="herdtrap" type="button" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
             <div>
               <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
                 <span>10 • CROWD SIGNAL</span>
@@ -841,7 +841,7 @@
           <div class="glass-panel rounded-3xl p-5 sm:p-7">
             <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-white/10">
               <div class="flex flex-wrap items-center gap-3">
-                <button id="backToGamesBtn" class="px-3.5 py-1.5 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 transition cursor-pointer">
+                <button id="backToGamesBtn" type="button" class="px-3.5 py-1.5 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 transition cursor-pointer">
                   ← All Games
                 </button>
                 <div>
@@ -853,15 +853,15 @@
               <div class="flex flex-wrap items-center gap-2.5">
                 <div class="glass-pill-track" id="soloDiffTrack" title="Solo Difficulty Tier">
                   <div id="soloDiffSlidingPill" class="liquid-pill-sm"></div>
-                  <button data-solo-diff="lowkey" class="solo-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Lowkey</button>
-                  <button data-solo-diff="locked_in" class="solo-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Locked In</button>
-                  <button data-solo-diff="cooked" class="solo-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Cooked</button>
+                  <button data-solo-diff="lowkey" type="button" class="solo-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Lowkey</button>
+                  <button data-solo-diff="locked_in" type="button" class="solo-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Locked In</button>
+                  <button data-solo-diff="cooked" type="button" class="solo-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Cooked</button>
                 </div>
 
                 <span id="soloPrDisplay" class="text-xs font-mono-code px-3 py-1.5 rounded-xl bg-amber-400/15 border border-amber-300/30 text-amber-200 font-bold">
                   PR: —
                 </span>
-                <button id="soloRestartBtn" class="px-3.5 py-1.5 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 transition cursor-pointer">
+                <button id="soloRestartBtn" type="button" class="px-3.5 py-1.5 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 transition cursor-pointer">
                   New Round ↻
                 </button>
               </div>
@@ -896,7 +896,7 @@
             <p class="text-zinc-300 max-w-lg mx-auto text-sm sm:text-base leading-relaxed mb-6">
               Sixty seconds on the clock. Solve rapid-fire micro-drills back-to-back across scanning, inhibition, logic, math, rotation, and crowd signals. Speed + accuracy build your sprint score.
             </p>
-            <button id="startSprintBtn" class="accent-btn px-8 py-3.5 rounded-full text-sm font-extrabold uppercase tracking-wider cursor-pointer">
+            <button id="startSprintBtn" type="button" class="accent-btn px-8 py-3.5 rounded-full text-sm font-extrabold uppercase tracking-wider cursor-pointer">
               Start 60s Sprint
             </button>
           </div>
@@ -909,7 +909,7 @@
             <span class="text-xs font-mono-code uppercase tracking-widest text-[var(--accent-primary)]">Sprint Complete</span>
             <h3 class="text-3xl sm:text-4xl font-black mt-2" id="sprintFinalScoreText">0 PTS</h3>
             <p id="sprintSummaryStats" class="text-sm text-zinc-300 mt-2 mb-6"></p>
-            <button id="restartSprintBtn" class="accent-btn px-7 py-3 rounded-full text-sm font-extrabold uppercase tracking-wider cursor-pointer">
+            <button id="restartSprintBtn" type="button" class="accent-btn px-7 py-3 rounded-full text-sm font-extrabold uppercase tracking-wider cursor-pointer">
               Run Another 60s Sprint
             </button>
           </div>
@@ -924,10 +924,10 @@
             <h2 class="text-2xl sm:text-4xl font-black tracking-tight mt-1">Your Brain Profile</h2>
           </div>
           <div class="flex flex-wrap items-center gap-2.5">
-            <button id="exportCsvBtn" class="px-4 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 transition cursor-pointer">
+            <button id="exportCsvBtn" type="button" class="px-4 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 transition cursor-pointer">
               Export Python CSV
             </button>
-            <button id="resetProgressBtn" class="px-4 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/30 text-rose-200 transition cursor-pointer">
+            <button id="resetProgressBtn" type="button" class="px-4 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/30 text-rose-200 transition cursor-pointer">
               Reset Data
             </button>
           </div>
@@ -987,7 +987,7 @@
             </div>
             <div class="flex items-center gap-2">
               <input id="playerCallsignInput" type="text" maxlength="16" placeholder="Your callsign..." class="px-3.5 py-2 rounded-xl text-xs font-mono-code bg-black/45 border border-white/15 text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--accent-primary)]" />
-              <button id="saveScoreToBoardBtn" class="accent-btn px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider cursor-pointer">
+              <button id="saveScoreToBoardBtn" type="button" class="accent-btn px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider cursor-pointer">
                 Log Current Score
               </button>
             </div>
@@ -1025,7 +1025,7 @@
   <div id="chaosPopup" class="hidden fixed bottom-5 right-5 z-40 max-w-xs glass-panel rounded-2xl p-4 border border-[var(--accent-tertiary)]/50 pop-in">
     <div class="flex items-center justify-between gap-2 mb-1">
       <span class="text-[10px] font-mono-code uppercase tracking-widest text-[var(--accent-tertiary)] font-bold">⚡ Chaos Interrupt</span>
-      <button id="dismissChaosBtn" class="text-xs text-zinc-400 hover:text-white cursor-pointer">✕</button>
+      <button id="dismissChaosBtn" type="button" class="text-xs text-zinc-400 hover:text-white cursor-pointer">✕</button>
     </div>
     <p id="chaosPopupText" class="text-xs text-zinc-200 leading-relaxed"></p>
   </div>
@@ -1972,9 +1972,7 @@ def py_build_session_csv(state_json):
     function saveState() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch (err) {
-        console.warn("Could not save state:", err);
-      }
+      } catch (_) {}
     }
 
     async function initPythonEngine() {
@@ -1986,7 +1984,9 @@ def py_build_session_csv(state_json):
         const pyodide = await loadPyodide({
           indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/"
         });
-        const pyCode = document.getElementById("unrot-python-engine").textContent;
+        const pyEl = document.getElementById("unrot-python-engine");
+        const pyCode = pyEl ? pyEl.textContent : "";
+        if (!pyCode.trim()) throw new Error("Empty Python block");
         await pyodide.runPythonAsync(pyCode);
 
         pyBridge = {
@@ -2016,24 +2016,30 @@ def py_build_session_csv(state_json):
     }
 
     function pyGenerateRound(gameKey, diffKey = "lowkey") {
-      if (pyodideReady && pyBridge.generateRound) {
-        return JSON.parse(pyBridge.generateRound(gameKey, diffKey));
-      }
+      try {
+        if (pyodideReady && pyBridge.generateRound) {
+          return JSON.parse(pyBridge.generateRound(gameKey, diffKey));
+        }
+      } catch (_) {}
       return { game: gameKey, diff: diffKey, subLabel: DIFF_FALLBACK[diffKey]?.label || "Lowkey" };
     }
 
     function pyPickNextFeedGame(recentGames) {
-      if (pyodideReady && pyBridge.pickNextFeedGame) {
-        return String(pyBridge.pickNextFeedGame(JSON.stringify(recentGames)));
-      }
+      try {
+        if (pyodideReady && pyBridge.pickNextFeedGame) {
+          return String(pyBridge.pickNextFeedGame(JSON.stringify(recentGames)));
+        }
+      } catch (_) {}
       const choices = GAME_ORDER.filter(g => g !== recentGames[recentGames.length - 1]);
       return choices[Math.floor(Math.random() * choices.length)] || "schulte";
     }
 
     function pyEvaluateRound(won, reactionMs, streak, chaosMode, diffKey = "lowkey") {
-      if (pyodideReady && pyBridge.evaluateRound) {
-        return JSON.parse(pyBridge.evaluateRound(won, reactionMs, streak, chaosMode, diffKey));
-      }
+      try {
+        if (pyodideReady && pyBridge.evaluateRound) {
+          return JSON.parse(pyBridge.evaluateRound(won, reactionMs, streak, chaosMode, diffKey));
+        }
+      } catch (_) {}
       const mult = (DIFF_FALLBACK[diffKey]?.multiplier || 1.0) * (chaosMode ? 1.25 : 1.0);
       if (!won) return { pointsEarned: 0, nextStreak: 0, shieldGained: false, multiplier: mult };
       const pts = Math.round((120 + Math.min(streak * 12, 120)) * mult);
@@ -2042,9 +2048,11 @@ def py_build_session_csv(state_json):
     }
 
     function pyComputeBrainProfile() {
-      if (pyodideReady && pyBridge.computeBrainProfile) {
-        return JSON.parse(pyBridge.computeBrainProfile(JSON.stringify(state.gameStats), JSON.stringify(state.roundHistory)));
-      }
+      try {
+        if (pyodideReady && pyBridge.computeBrainProfile) {
+          return JSON.parse(pyBridge.computeBrainProfile(JSON.stringify(state.gameStats), JSON.stringify(state.roundHistory)));
+        }
+      } catch (_) {}
       const perGame = {};
       let tested = 0;
       let sum = 0;
@@ -2073,9 +2081,11 @@ def py_build_session_csv(state_json):
     }
 
     function pyUpdateLeaderboard(board, newEntry) {
-      if (pyodideReady && pyBridge.updateLeaderboard) {
-        return JSON.parse(pyBridge.updateLeaderboard(JSON.stringify(board), JSON.stringify(newEntry)));
-      }
+      try {
+        if (pyodideReady && pyBridge.updateLeaderboard) {
+          return JSON.parse(pyBridge.updateLeaderboard(JSON.stringify(board), JSON.stringify(newEntry)));
+        }
+      } catch (_) {}
       const next = board.slice();
       if (newEntry && newEntry.score > 0) next.push(newEntry);
       next.sort((a, b) => b.score - a.score);
@@ -2083,17 +2093,21 @@ def py_build_session_csv(state_json):
     }
 
     function pyGetCoachLine(coachStyle, won, usedShield = false) {
-      if (pyodideReady && pyBridge.getCoachLine) {
-        return String(pyBridge.getCoachLine(coachStyle, won, usedShield));
-      }
+      try {
+        if (pyodideReady && pyBridge.getCoachLine) {
+          return String(pyBridge.getCoachLine(coachStyle, won, usedShield));
+        }
+      } catch (_) {}
       if (usedShield) return "Focus Shield absorbed the hit.";
       return won ? "Clean execution. Keep rolling." : "Missed that one—reset and lock in.";
     }
 
     function pyBuildSessionCsv() {
-      if (pyodideReady && pyBridge.buildSessionCsv) {
-        return String(pyBridge.buildSessionCsv(JSON.stringify(state)));
-      }
+      try {
+        if (pyodideReady && pyBridge.buildSessionCsv) {
+          return String(pyBridge.buildSessionCsv(JSON.stringify(state)));
+        }
+      } catch (_) {}
       return "game_key,attempts,wins\n";
     }
 
@@ -2213,36 +2227,48 @@ def py_build_session_csv(state_json):
 
     function syncHUD() {
       const dCfg = DIFF_FALLBACK[state.feedDiff] || DIFF_FALLBACK.lowkey;
-      document.getElementById("hudScore").textContent = state.score.toLocaleString();
-      document.getElementById("hudStreak").textContent = state.streak;
-      document.getElementById("hudBest").textContent = state.bestScore.toLocaleString();
-      document.getElementById("hudTier").textContent = dCfg.hudLabel;
-      document.getElementById("hudShields").textContent = state.shields;
+      const scoreEl = document.getElementById("hudScore");
+      const streakEl = document.getElementById("hudStreak");
+      const bestEl = document.getElementById("hudBest");
+      const tierEl = document.getElementById("hudTier");
+      const shieldsEl = document.getElementById("hudShields");
+      if (scoreEl) scoreEl.textContent = state.score.toLocaleString();
+      if (streakEl) streakEl.textContent = state.streak;
+      if (bestEl) bestEl.textContent = state.bestScore.toLocaleString();
+      if (tierEl) tierEl.textContent = dCfg.hudLabel;
+      if (shieldsEl) shieldsEl.textContent = state.shields;
 
       const chaosBtn = document.getElementById("chaosToggleBtn");
-      if (state.chaosMode) {
-        chaosBtn.textContent = "Chaos: ON";
-        chaosBtn.className = "px-3 py-1.5 rounded-full text-[11px] font-mono-code uppercase tracking-wider border border-[var(--accent-tertiary)] bg-[var(--accent-tertiary)]/20 text-white font-bold transition cursor-pointer";
-      } else {
-        chaosBtn.textContent = "Chaos: OFF";
-        chaosBtn.className = "px-3 py-1.5 rounded-full text-[11px] font-mono-code uppercase tracking-wider border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 transition cursor-pointer";
+      if (chaosBtn) {
+        if (state.chaosMode) {
+          chaosBtn.textContent = "Chaos: ON";
+          chaosBtn.className = "px-3 py-1.5 rounded-full text-[11px] font-mono-code uppercase tracking-wider border border-[var(--accent-tertiary)] bg-[var(--accent-tertiary)]/20 text-white font-bold transition cursor-pointer";
+        } else {
+          chaosBtn.textContent = "Chaos: OFF";
+          chaosBtn.className = "px-3 py-1.5 rounded-full text-[11px] font-mono-code uppercase tracking-wider border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 transition cursor-pointer";
+        }
       }
 
       const acc = state.totalRounds > 0 ? Math.round((state.totalWins / state.totalRounds) * 100) : 100;
-      document.getElementById("feedAccuracyStat").textContent = `${acc}%`;
-
-      if (state.speedSamplesMs.length > 0) {
-        const avg = Math.round(state.speedSamplesMs.reduce((a, b) => a + b, 0) / state.speedSamplesMs.length);
-        document.getElementById("feedAvgSpeedStat").textContent = `${(avg / 1000).toFixed(2)}s`;
-      } else {
-        document.getElementById("feedAvgSpeedStat").textContent = "—";
+      const accEl = document.getElementById("feedAccuracyStat");
+      const spdEl = document.getElementById("feedAvgSpeedStat");
+      const shdEl = document.getElementById("feedShieldProgress");
+      const rndEl = document.getElementById("feedRoundCounter");
+      if (accEl) accEl.textContent = `${acc}%`;
+      if (spdEl) {
+        if (state.speedSamplesMs.length > 0) {
+          const avg = Math.round(state.speedSamplesMs.reduce((a, b) => a + b, 0) / state.speedSamplesMs.length);
+          spdEl.textContent = `${(avg / 1000).toFixed(2)}s`;
+        } else {
+          spdEl.textContent = "—";
+        }
       }
+      if (shdEl) shdEl.textContent = `${state.streak % 5} / 5`;
+      if (rndEl) rndEl.textContent = `REEL #${feedRoundNum}`;
 
-      document.getElementById("feedShieldProgress").textContent = `${state.streak % 5} / 5`;
-      document.getElementById("feedRoundCounter").textContent = `REEL #${feedRoundNum}`;
-
-      if (!feedLoopActive) {
-        document.getElementById("feedClockReadout").textContent = `${dCfg.feedSeconds.toFixed(1)}s`;
+      const clkEl = document.getElementById("feedClockReadout");
+      if (!feedLoopActive && clkEl) {
+        clkEl.textContent = `${dCfg.feedSeconds.toFixed(1)}s`;
       }
     }
 
@@ -2324,9 +2350,11 @@ def py_build_session_csv(state_json):
 
       if (animate) {
         const track = document.getElementById("themeTrack");
-        track.classList.remove("mode-switch-pulse");
-        void track.offsetWidth;
-        track.classList.add("mode-switch-pulse");
+        if (track) {
+          track.classList.remove("mode-switch-pulse");
+          void track.offsetWidth;
+          track.classList.add("mode-switch-pulse");
+        }
       }
       syncAllLiquidPills(false);
     }
@@ -2338,9 +2366,11 @@ def py_build_session_csv(state_json):
 
       if (animate) {
         const track = document.getElementById("coachTrack");
-        track.classList.remove("mode-switch-pulse");
-        void track.offsetWidth;
-        track.classList.add("mode-switch-pulse");
+        if (track) {
+          track.classList.remove("mode-switch-pulse");
+          void track.offsetWidth;
+          track.classList.add("mode-switch-pulse");
+        }
       }
       syncAllLiquidPills(false);
       setStatus(`Coach switched to ${valid.toUpperCase()} mode.`);
@@ -2354,9 +2384,11 @@ def py_build_session_csv(state_json):
 
       if (animate) {
         const track = document.getElementById("feedDiffTrack");
-        track.classList.remove("mode-switch-pulse");
-        void track.offsetWidth;
-        track.classList.add("mode-switch-pulse");
+        if (track) {
+          track.classList.remove("mode-switch-pulse");
+          void track.offsetWidth;
+          track.classList.add("mode-switch-pulse");
+        }
       }
       syncAllLiquidPills(false);
 
@@ -2374,9 +2406,11 @@ def py_build_session_csv(state_json):
 
       if (animate) {
         const track = document.getElementById("soloDiffTrack");
-        track.classList.remove("mode-switch-pulse");
-        void track.offsetWidth;
-        track.classList.add("mode-switch-pulse");
+        if (track) {
+          track.classList.remove("mode-switch-pulse");
+          void track.offsetWidth;
+          track.classList.add("mode-switch-pulse");
+        }
       }
       syncAllLiquidPills(false);
 
@@ -2415,7 +2449,7 @@ def py_build_session_csv(state_json):
 
       if (tabName === "feed") {
         const veil = document.getElementById("feedVeil");
-        if (!feedLoopActive) {
+        if (veil && !feedLoopActive) {
           veil.classList.remove("feed-veil-hidden");
         }
       } else if (tabName === "games") {
@@ -2477,8 +2511,9 @@ def py_build_session_csv(state_json):
       const isNewPR = updatePersonalRecord(gameKey, won, evalRes.pointsEarned, cleanMs);
 
       const coachText = pyGetCoachLine(state.coach, won, usedShield);
-      if (context === "feed") {
-        document.getElementById("feedCoachLine").textContent = `“${coachText}”`;
+      const coachEl = document.getElementById("feedCoachLine");
+      if (context === "feed" && coachEl) {
+        coachEl.textContent = `“${coachText}”`;
       }
 
       flashOutcomeOnStage(context, won);
@@ -2510,13 +2545,16 @@ def py_build_session_csv(state_json):
         "Your attention is currency. Spend it deliberately."
       ];
       const popup = document.getElementById("chaosPopup");
-      document.getElementById("chaosPopupText").textContent = lines[Math.floor(Math.random() * lines.length)];
-      popup.classList.remove("hidden");
+      const txt = document.getElementById("chaosPopupText");
+      if (popup && txt) {
+        txt.textContent = lines[Math.floor(Math.random() * lines.length)];
+        popup.classList.remove("hidden");
+      }
     }
 
     function startFeedFromVeil() {
       const veil = document.getElementById("feedVeil");
-      veil.classList.add("feed-veil-hidden");
+      if (veil) veil.classList.add("feed-veil-hidden");
       feedLoopActive = true;
       feedRoundNum = 1;
       state.recentGames = [];
@@ -2524,6 +2562,7 @@ def py_build_session_csv(state_json):
       syncHUD();
 
       const mount = document.getElementById("feedCardMount");
+      if (!mount) return;
       let count = 3;
       mount.innerHTML = `
         <div class="text-center py-12">
@@ -2550,7 +2589,7 @@ def py_build_session_csv(state_json):
       runCleanup();
       feedLoopActive = false;
       const veil = document.getElementById("feedVeil");
-      veil.classList.remove("feed-veil-hidden");
+      if (veil) veil.classList.remove("feed-veil-hidden");
       const bar = document.getElementById("feedTimerBar");
       if (bar) {
         bar.style.transform = "scaleX(1)";
@@ -2606,11 +2645,15 @@ def py_build_session_csv(state_json):
       saveState();
 
       const data = pyGenerateRound(gameKey, state.feedDiff);
-      document.getElementById("feedGameBadge").textContent = GAME_META[gameKey].title.toUpperCase();
-      document.getElementById("feedSubBadge").textContent = data.subLabel || "";
-      document.getElementById("feedRoundCounter").textContent = `REEL #${feedRoundNum}`;
+      const badge = document.getElementById("feedGameBadge");
+      const subBadge = document.getElementById("feedSubBadge");
+      const rndCounter = document.getElementById("feedRoundCounter");
+      if (badge) badge.textContent = GAME_META[gameKey].title.toUpperCase();
+      if (subBadge) subBadge.textContent = data.subLabel || "";
+      if (rndCounter) rndCounter.textContent = `REEL #${feedRoundNum}`;
 
       const mount = document.getElementById("feedCardMount");
+      if (!mount) return;
       mount.classList.remove("card-enter");
       void mount.offsetWidth;
       mount.classList.add("card-enter");
@@ -2813,7 +2856,7 @@ def py_build_session_csv(state_json):
       `;
 
       const gridEl = container.querySelector("#schulteGrid");
-      data.cells.forEach(num => {
+      (data.cells || []).forEach(num => {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "schulte-cell h-14 sm:h-16 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 font-mono-code font-extrabold text-base sm:text-lg text-white cursor-pointer";
@@ -2857,6 +2900,7 @@ def py_build_session_csv(state_json):
 
       function drawRound() {
         const r = rounds[rIdx];
+        if (!r) return;
         const isInvert = r.mode === "match_word";
         container.innerHTML = `
           <div class="text-center">
@@ -3116,13 +3160,13 @@ def py_build_session_csv(state_json):
     function renderLogicBlitz(container, data, onComplete) {
       const seqHtml = `
         <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
-          ${data.sequence.map(n => `
+          ${(data.sequence || []).map(n => `
             <span class="px-4 py-2.5 rounded-2xl bg-white/10 border border-white/15 font-mono-code font-extrabold text-xl sm:text-2xl">${n}</span>
           `).join("")}
           <span class="px-4 py-2.5 rounded-2xl bg-[var(--accent-primary)]/15 border border-dashed border-[var(--accent-primary)] font-mono-code font-extrabold text-xl sm:text-2xl text-[var(--accent-primary)]">?</span>
         </div>
       `;
-      return renderMultipleChoiceCard(container, "Complete the Pattern", seqHtml, data.options, data.correctIndex, onComplete);
+      return renderMultipleChoiceCard(container, "Complete the Pattern", seqHtml, data.options || [], data.correctIndex || 0, onComplete);
     }
 
     function renderMathBlitz(container, data, onComplete) {
@@ -3133,6 +3177,7 @@ def py_build_session_csv(state_json):
 
       function showQ() {
         const q = qs[qIdx];
+        if (!q) return;
         const eqHtml = `
           <div class="text-xs font-mono-code uppercase tracking-widest text-[var(--accent-secondary)] mb-2">
             Equation ${qIdx + 1} of ${qs.length}
@@ -3170,15 +3215,15 @@ def py_build_session_csv(state_json):
     function renderTimeBlind(container, data, onComplete) {
       let phase = "running";
       const startPerf = performance.now();
-      const targetMs = data.targetSec * 1000;
-      const hideMs = data.hideAfterSec * 1000;
-      const tolMs = data.toleranceSec * 1000;
+      const targetMs = (data.targetSec || 4.0) * 1000;
+      const hideMs = (data.hideAfterSec || 1.0) * 1000;
+      const tolMs = (data.toleranceSec || 0.3) * 1000;
       let rafId = null;
 
       container.innerHTML = `
         <div class="text-center">
           <div class="text-xs font-mono-code uppercase tracking-widest text-zinc-400 mb-2">
-            Stop at <strong class="text-[var(--accent-primary)]">${data.targetSec.toFixed(1)}s</strong> (±${data.toleranceSec.toFixed(2)}s)
+            Stop at <strong class="text-[var(--accent-primary)]">${(data.targetSec || 4.0).toFixed(1)}s</strong> (±${(data.toleranceSec || 0.3).toFixed(2)}s)
           </div>
           <div id="tbClockFace" class="text-5xl sm:text-6xl font-black font-mono-code my-5 text-white">0.00s</div>
           <div id="tbDecoyPulse" class="h-3 w-3 rounded-full mx-auto mb-5 bg-[var(--accent-secondary)]/30"></div>
@@ -3256,7 +3301,7 @@ def py_build_session_csv(state_json):
       const canvas = container.querySelector("#gtCanvas");
       const ctx = canvas.getContext("2d");
       const instr = container.querySelector("#gtInstruction");
-      const orbs = data.orbs.map(o => ({
+      const orbs = (data.orbs || []).map(o => ({
         ...o,
         x: o.xNorm * canvas.width,
         y: o.yNorm * canvas.height,
@@ -3388,15 +3433,16 @@ def py_build_session_csv(state_json):
     }
 
     function renderShapeSvg(coords, accentColor) {
-      const xs = coords.map(p => p[0]);
-      const ys = coords.map(p => p[1]);
+      const pts = coords && coords.length ? coords : [[0, 0]];
+      const xs = pts.map(p => p[0]);
+      const ys = pts.map(p => p[1]);
       const maxX = Math.max(...xs) + 1;
       const maxY = Math.max(...ys) + 1;
       const cell = 24;
       const w = maxX * cell + 16;
       const h = maxY * cell + 16;
 
-      const rects = coords.map(([x, y]) =>
+      const rects = pts.map(([x, y]) =>
         `<rect x="${8 + x * cell}" y="${8 + y * cell}" width="${cell - 3}" height="${cell - 3}" rx="5" fill="${accentColor}" />`
       ).join("");
 
@@ -3408,7 +3454,7 @@ def py_build_session_csv(state_json):
       container.innerHTML = `
         <div class="text-center">
           <div class="text-xs font-mono-code uppercase tracking-widest text-zinc-400 mb-4">
-            Is the right shape a <strong class="text-white">True Rotation (${data.angleDeg}°)</strong> or a <strong class="text-rose-300">Mirror Flip</strong>?
+            Is the right shape a <strong class="text-white">True Rotation (${data.angleDeg || 90}°)</strong> or a <strong class="text-rose-300">Mirror Flip</strong>?
           </div>
           <div class="grid grid-cols-2 gap-4 max-w-md mx-auto my-4">
             <div class="rounded-2xl bg-black/40 border border-white/10 p-4 flex flex-col items-center justify-center min-h-[130px]">
@@ -3466,7 +3512,7 @@ def py_build_session_csv(state_json):
     function renderHerdTrap(container, data, onComplete) {
       let locked = false;
       const degMap = { UP: 0, RIGHT: 90, DOWN: 180, LEFT: 270 };
-      const arrowGlyphs = data.arrows.map(dir => {
+      const arrowGlyphs = (data.arrows || []).map(dir => {
         const deg = degMap[dir] || 0;
         return `<span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 border border-white/15 font-mono-code font-bold text-lg" style="transform: rotate(${deg}deg)">↑</span>`;
       }).join("");
@@ -3480,7 +3526,7 @@ def py_build_session_csv(state_json):
             ${arrowGlyphs}
           </div>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-md mx-auto mt-5">
-            ${data.options.map(dir => `
+            ${(data.options || ["UP", "DOWN", "LEFT", "RIGHT"]).map(dir => `
               <button data-herd-dir="${dir}" type="button" class="herd-btn py-3 px-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 font-mono-code font-bold text-xs cursor-pointer transition">
                 ${dir}
               </button>
@@ -3517,6 +3563,7 @@ def py_build_session_csv(state_json):
       const trendEl = document.getElementById("profileTrendBadge");
       const winRateEl = document.getElementById("profileWinRate");
       const playedEl = document.getElementById("profilePlayedCount");
+      if (!indexEl || !rankEl || !trendEl || !winRateEl || !playedEl) return;
 
       indexEl.textContent = profile.brainIndex !== null ? String(profile.brainIndex) : "—";
       rankEl.textContent = profile.rankLabel;
@@ -3533,12 +3580,16 @@ def py_build_session_csv(state_json):
       winRateEl.textContent = profile.winRate !== null ? `${profile.winRate}%` : "—";
       playedEl.textContent = `${profile.testedCount}/10 DRILLS TESTED`;
 
-      document.getElementById("brainInsightText").textContent = profile.insight;
-      document.getElementById("profileTotalRounds").textContent = state.totalRounds;
-      document.getElementById("profileBestStreak").textContent = state.bestStreak;
+      const insightEl = document.getElementById("brainInsightText");
+      const roundsEl = document.getElementById("profileTotalRounds");
+      const streakEl = document.getElementById("profileBestStreak");
+      if (insightEl) insightEl.textContent = profile.insight;
+      if (roundsEl) roundsEl.textContent = state.totalRounds;
+      if (streakEl) streakEl.textContent = state.bestStreak;
 
       const barsWrap = document.getElementById("skillBarsContainer");
       const kpiGrid = document.getElementById("pillarKpiGrid");
+      if (!barsWrap || !kpiGrid) return;
       barsWrap.innerHTML = "";
       kpiGrid.innerHTML = "";
 
@@ -3578,9 +3629,11 @@ def py_build_session_csv(state_json):
 
     function renderLeaderboard() {
       const tbody = document.getElementById("leaderboardBody");
+      if (!tbody) return;
       const sorted = pyUpdateLeaderboard(state.leaderboard, null);
       state.leaderboard = sorted;
-      document.getElementById("playerCallsignInput").value = state.callsign || "YOU";
+      const callInput = document.getElementById("playerCallsignInput");
+      if (callInput) callInput.value = state.callsign || "YOU";
 
       tbody.innerHTML = sorted.map((row, idx) => `
         <tr class="${idx === 0 ? "bg-white/[0.04]" : ""}">
@@ -3602,18 +3655,24 @@ def py_build_session_csv(state_json):
     }
 
     function bindEvents() {
-      document.getElementById("enterAppBtn").addEventListener("click", () => {
-        document.getElementById("introVeil").classList.add("veil-dismissed");
+      const on = (id, evt, fn) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener(evt, fn);
+      };
+
+      on("enterAppBtn", "click", () => {
+        const veil = document.getElementById("introVeil");
+        if (veil) veil.classList.add("veil-dismissed");
         requestAnimationFrame(() => syncAllLiquidPills(true));
         setStatus("Welcome to UNROT. Jump into Feed, Games, or 60s Sprint.");
       });
 
-      document.getElementById("replayIntroBtn").addEventListener("click", () => {
+      on("replayIntroBtn", "click", () => {
         const veil = document.getElementById("introVeil");
-        veil.classList.remove("veil-dismissed");
+        if (veil) veil.classList.remove("veil-dismissed");
       });
 
-      document.getElementById("brandHomeBtn").addEventListener("click", () => switchTab("feed"));
+      on("brandHomeBtn", "click", () => switchTab("feed"));
 
       document.querySelectorAll(".nav-tab").forEach(btn => {
         btn.addEventListener("click", () => switchTab(btn.getAttribute("data-tab")));
@@ -3635,20 +3694,21 @@ def py_build_session_csv(state_json):
         btn.addEventListener("click", () => applySoloDiff(btn.getAttribute("data-solo-diff"), true));
       });
 
-      document.getElementById("chaosToggleBtn").addEventListener("click", () => {
+      on("chaosToggleBtn", "click", () => {
         state.chaosMode = !state.chaosMode;
         saveState();
         syncHUD();
         if (state.chaosMode) triggerChaosPopup();
       });
 
-      document.getElementById("dismissChaosBtn").addEventListener("click", () => {
-        document.getElementById("chaosPopup").classList.add("hidden");
+      on("dismissChaosBtn", "click", () => {
+        const popup = document.getElementById("chaosPopup");
+        if (popup) popup.classList.add("hidden");
       });
 
-      document.getElementById("startFeedBtn").addEventListener("click", startFeedFromVeil);
-      document.getElementById("stopFeedBtn").addEventListener("click", stopFeedLoop);
-      document.getElementById("nextReelBtn").addEventListener("click", () => {
+      on("startFeedBtn", "click", startFeedFromVeil);
+      on("stopFeedBtn", "click", stopFeedLoop);
+      on("nextReelBtn", "click", () => {
         if (!feedLoopActive) {
           startFeedFromVeil();
           return;
@@ -3659,14 +3719,16 @@ def py_build_session_csv(state_json):
 
       const feedStage = document.getElementById("feedStageContainer");
       const veilGlowOrb = document.getElementById("feedVeilGlowOrb");
-      feedStage.addEventListener("pointermove", (e) => {
-        const veil = document.getElementById("feedVeil");
-        if (!veilGlowOrb || veil.classList.contains("feed-veil-hidden")) return;
-        const rect = veil.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        veilGlowOrb.style.transform = `translate3d(${(x - 110).toFixed(1)}px, ${(y - 110).toFixed(1)}px, 0)`;
-      }, { passive: true });
+      if (feedStage) {
+        feedStage.addEventListener("pointermove", (e) => {
+          const veil = document.getElementById("feedVeil");
+          if (!veilGlowOrb || !veil || veil.classList.contains("feed-veil-hidden")) return;
+          const rect = veil.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          veilGlowOrb.style.transform = `translate3d(${(x - 110).toFixed(1)}px, ${(y - 110).toFixed(1)}px, 0)`;
+        }, { passive: true });
+      }
 
       document.querySelectorAll("[data-game-select]").forEach(card => {
         card.addEventListener("click", () => {
@@ -3674,17 +3736,17 @@ def py_build_session_csv(state_json):
         });
       });
 
-      document.getElementById("backToGamesBtn").addEventListener("click", openGamesGrid);
-      document.getElementById("soloRestartBtn").addEventListener("click", () => {
+      on("backToGamesBtn", "click", openGamesGrid);
+      on("soloRestartBtn", "click", () => {
         if (activeSoloGame) launchSoloGame(activeSoloGame);
       });
 
-      document.getElementById("startSprintBtn").addEventListener("click", startSprint);
-      document.getElementById("restartSprintBtn").addEventListener("click", startSprint);
+      on("startSprintBtn", "click", startSprint);
+      on("restartSprintBtn", "click", startSprint);
 
-      document.getElementById("saveScoreToBoardBtn").addEventListener("click", () => {
+      on("saveScoreToBoardBtn", "click", () => {
         const input = document.getElementById("playerCallsignInput");
-        const callsign = (input.value || "YOU").trim().toUpperCase().slice(0, 16) || "YOU";
+        const callsign = ((input && input.value) || "YOU").trim().toUpperCase().slice(0, 16) || "YOU";
         state.callsign = callsign;
         const scoreToLog = state.bestScore > 0 ? state.bestScore : state.score;
         if (scoreToLog <= 0) {
@@ -3702,7 +3764,7 @@ def py_build_session_csv(state_json):
         setStatus(`Logged ${scoreToLog.toLocaleString()} PTS for ${callsign}.`);
       });
 
-      document.getElementById("exportCsvBtn").addEventListener("click", () => {
+      on("exportCsvBtn", "click", () => {
         const csvContent = pyBuildSessionCsv();
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
@@ -3716,7 +3778,7 @@ def py_build_session_csv(state_json):
         setStatus("Exported unrot_cognitive_sessions.csv");
       });
 
-      document.getElementById("resetProgressBtn").addEventListener("click", () => {
+      on("resetProgressBtn", "click", () => {
         state = createDefaultState();
         saveState();
         applyTheme(state.theme, false);
@@ -3732,16 +3794,18 @@ def py_build_session_csv(state_json):
 
       document.addEventListener("keydown", (e) => {
         const veil = document.getElementById("introVeil");
-        if (!veil.classList.contains("veil-dismissed")) {
+        if (veil && !veil.classList.contains("veil-dismissed")) {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            document.getElementById("enterAppBtn").click();
+            const enterBtn = document.getElementById("enterAppBtn");
+            if (enterBtn) enterBtn.click();
           }
           return;
         }
 
         if (e.key === "Escape") {
-          const feedVisible = !document.getElementById("view-feed").classList.contains("hidden");
+          const feedSec = document.getElementById("view-feed");
+          const feedVisible = feedSec && !feedSec.classList.contains("hidden");
           if (feedVisible && feedLoopActive) {
             stopFeedLoop();
           }
@@ -3750,11 +3814,14 @@ def py_build_session_csv(state_json):
 
         if (["1", "2", "3", "4"].includes(e.key)) {
           const idx = Number(e.key) - 1;
-          const visibleContainer = !document.getElementById("view-feed").classList.contains("hidden")
+          const vFeed = document.getElementById("view-feed");
+          const vGames = document.getElementById("view-games");
+          const vSprint = document.getElementById("view-sprint");
+          const visibleContainer = (vFeed && !vFeed.classList.contains("hidden"))
             ? document.getElementById("feedCardMount")
-            : !document.getElementById("view-games").classList.contains("hidden")
+            : (vGames && !vGames.classList.contains("hidden"))
               ? document.getElementById("soloCardMount")
-              : !document.getElementById("view-sprint").classList.contains("hidden")
+              : (vSprint && !vSprint.classList.contains("hidden"))
                 ? document.getElementById("sprintCardMount")
                 : null;
           if (visibleContainer) {
@@ -3772,19 +3839,25 @@ def py_build_session_csv(state_json):
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      applyTheme(state.theme, false);
-      applyCoach(state.coach, false);
-      applyFeedDiff(state.feedDiff, false);
-      applySoloDiff(state.soloDiff, false);
-      renderAllPRBadges();
-      syncHUD();
-      renderBrainProfile();
-      renderLeaderboard();
-      bindEvents();
-      requestAnimationFrame(() => syncAllLiquidPills(true));
-      initPythonEngine();
-    });
+    function bootApp() {
+      try { applyTheme(state.theme, false); } catch (e) { console.warn(e); }
+      try { applyCoach(state.coach, false); } catch (e) { console.warn(e); }
+      try { applyFeedDiff(state.feedDiff, false); } catch (e) { console.warn(e); }
+      try { applySoloDiff(state.soloDiff, false); } catch (e) { console.warn(e); }
+      try { renderAllPRBadges(); } catch (e) { console.warn(e); }
+      try { syncHUD(); } catch (e) { console.warn(e); }
+      try { renderBrainProfile(); } catch (e) { console.warn(e); }
+      try { renderLeaderboard(); } catch (e) { console.warn(e); }
+      try { bindEvents(); } catch (e) { console.warn(e); }
+      try { requestAnimationFrame(() => syncAllLiquidPills(true)); } catch (e) { console.warn(e); }
+      try { initPythonEngine(); } catch (e) { console.warn(e); }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", bootApp);
+    } else {
+      bootApp();
+    }
   </script>
 </body>
 </html>
