@@ -1,0 +1,3790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNROT. — Anti-Brainrot Cognitive Arcade</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  <style>
+    :root {
+      --bg-base: #09090b;
+      --bg-surface: #121216;
+      --bg-elevated: #18181f;
+      --text-primary: #f4f4f6;
+      --text-muted: #9898a6;
+      --accent-primary: #b8ff2c;
+      --accent-secondary: #38bdf8;
+      --accent-tertiary: #fb7185;
+      --glass-bg: rgba(24, 24, 31, 0.72);
+      --glass-border: rgba(255, 255, 255, 0.11);
+      --glass-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.65);
+    }
+
+    body[data-theme="bw"] {
+      --bg-base: #070708;
+      --bg-surface: #111113;
+      --bg-elevated: #19191d;
+      --text-primary: #f5f5f5;
+      --text-muted: #9a9aa2;
+      --accent-primary: #ffffff;
+      --accent-secondary: #d4d4d8;
+      --accent-tertiary: #a1a1aa;
+      --glass-bg: rgba(20, 20, 24, 0.78);
+      --glass-border: rgba(255, 255, 255, 0.14);
+    }
+
+    body[data-theme="neon"] {
+      --bg-base: #070611;
+      --bg-surface: #100e22;
+      --bg-elevated: #181533;
+      --text-primary: #f8fafc;
+      --text-muted: #a5a3c7;
+      --accent-primary: #c6ff33;
+      --accent-secondary: #22d3ee;
+      --accent-tertiary: #f43f5e;
+      --glass-bg: rgba(21, 18, 44, 0.74);
+      --glass-border: rgba(167, 139, 250, 0.24);
+    }
+
+    body[data-theme="pastel"] {
+      --bg-base: #13111c;
+      --bg-surface: #1c1929;
+      --bg-elevated: #262238;
+      --text-primary: #faf7ff;
+      --text-muted: #b5aec9;
+      --accent-primary: #bef264;
+      --accent-secondary: #7dd3fc;
+      --accent-tertiary: #fda4af;
+      --glass-bg: rgba(34, 30, 50, 0.74);
+      --glass-border: rgba(244, 240, 255, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      transition: background-color 0.45s cubic-bezier(0.22, 1, 0.36, 1), color 0.35s ease;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ambient-orb {
+      position: absolute;
+      border-radius: 9999px;
+      will-change: transform, opacity;
+      transition: background 0.6s ease, opacity 0.6s ease;
+    }
+
+    .orb-1 {
+      width: 620px;
+      height: 620px;
+      top: -180px;
+      left: -140px;
+      opacity: 0.22;
+      background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%);
+      animation: orbFloatA 16s ease-in-out infinite alternate;
+    }
+
+    .orb-2 {
+      width: 560px;
+      height: 560px;
+      bottom: -180px;
+      right: -120px;
+      opacity: 0.18;
+      background: radial-gradient(circle, var(--accent-secondary) 0%, transparent 70%);
+      animation: orbFloatB 20s ease-in-out infinite alternate;
+    }
+
+    .orb-3 {
+      width: 440px;
+      height: 440px;
+      top: 38%;
+      left: 52%;
+      opacity: 0.12;
+      background: radial-gradient(circle, var(--accent-tertiary) 0%, transparent 70%);
+      animation: orbFloatC 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes orbFloatA {
+      0% { transform: translate3d(0px, 0px, 0) scale(1); }
+      100% { transform: translate3d(70px, 55px, 0) scale(1.12); }
+    }
+    @keyframes orbFloatB {
+      0% { transform: translate3d(0px, 0px, 0) scale(1); }
+      100% { transform: translate3d(-65px, -50px, 0) scale(1.15); }
+    }
+    @keyframes orbFloatC {
+      0% { transform: translate3d(0px, 0px, 0) scale(0.95); }
+      100% { transform: translate3d(-50px, 40px, 0) scale(1.1); }
+    }
+
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(22px) saturate(155%);
+      -webkit-backdrop-filter: blur(22px) saturate(155%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+    }
+
+    .glass-pill-track {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 9999px;
+      background: rgba(10, 10, 14, 0.56);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+      isolation: isolate;
+    }
+
+    .liquid-pill,
+    .liquid-pill-sm {
+      top: 0;
+      left: 0;
+      margin: 0;
+      box-sizing: border-box;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(226, 232, 240, 0.84));
+      box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.35),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9),
+        inset 0 -1px 2px rgba(15, 23, 42, 0.18);
+      transition: transform 0.42s cubic-bezier(0.22, 1.28, 0.36, 1), width 0.38s cubic-bezier(0.22, 1.28, 0.36, 1), height 0.38s cubic-bezier(0.22, 1.28, 0.36, 1), opacity 0.22s ease;
+      will-change: transform, width, height;
+      z-index: 1;
+      position: absolute;
+      border-radius: 9999px;
+      pointer-events: none;
+    }
+
+    .pill-btn {
+      position: relative;
+      z-index: 2;
+      transition: color 0.25s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .pill-btn:active {
+      transform: scale(0.95);
+    }
+
+    .pill-btn.active-pill {
+      color: #09090b !important;
+      font-weight: 700;
+    }
+
+    .accent-btn {
+      background-color: var(--accent-primary);
+      color: #09090b;
+      font-weight: 700;
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, filter 0.2s ease;
+    }
+
+    .accent-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px -6px var(--accent-primary);
+      filter: brightness(1.04);
+    }
+
+    .accent-btn:active {
+      transform: translateY(0px) scale(0.98);
+    }
+
+    @keyframes modePulse {
+      0% { transform: scale(0.985); }
+      55% { transform: scale(1.012); }
+      100% { transform: scale(1); }
+    }
+
+    .mode-switch-pulse {
+      animation: modePulse 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes viewEnter {
+      0% {
+        opacity: 0;
+        transform: translateY(14px) scale(0.99);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .view-animate {
+      animation: viewEnter 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes cardSwap {
+      0% {
+        opacity: 0;
+        transform: translateY(18px) scale(0.975);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .card-enter {
+      animation: cardSwap 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .bento-card {
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, box-shadow 0.3s ease, background-color 0.25s ease;
+    }
+
+    .bento-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.24);
+      box-shadow: 0 20px 42px -15px rgba(0, 0, 0, 0.65);
+    }
+
+    .schulte-cell {
+      transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .schulte-cell:hover:not(:disabled) {
+      transform: scale(1.04);
+      border-color: var(--accent-primary);
+    }
+
+    .schulte-cell:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    @keyframes wrongShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-7px); }
+      40% { transform: translateX(7px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    .wrong-shake {
+      animation: wrongShake 0.34s ease;
+    }
+
+    .answer-correct {
+      background-color: rgba(16, 185, 129, 0.22) !important;
+      border-color: #34d399 !important;
+      color: #ecfdf5 !important;
+      box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.45), 0 10px 24px -8px rgba(16, 185, 129, 0.55) !important;
+      transform: scale(1.02);
+    }
+
+    .answer-wrong {
+      background-color: rgba(244, 63, 94, 0.22) !important;
+      border-color: #fb7185 !important;
+      color: #ffe4e6 !important;
+      box-shadow: 0 0 0 2px rgba(251, 113, 133, 0.5), 0 10px 24px -8px rgba(244, 63, 94, 0.55) !important;
+      animation: wrongShake 0.34s ease;
+    }
+
+    @keyframes cardFlashGreen {
+      0% { box-shadow: inset 0 0 0 2px rgba(52, 211, 153, 0.75), 0 0 28px -6px rgba(16, 185, 129, 0.45); }
+      100% { box-shadow: var(--glass-shadow); }
+    }
+
+    @keyframes cardFlashRed {
+      0% { box-shadow: inset 0 0 0 2px rgba(251, 113, 133, 0.8), 0 0 28px -6px rgba(244, 63, 94, 0.5); }
+      100% { box-shadow: var(--glass-shadow); }
+    }
+
+    .card-result-win {
+      animation: cardFlashGreen 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .card-result-lose {
+      animation: cardFlashRed 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #feedTimerBar {
+      transform-origin: left center;
+      will-change: transform, background-color;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.86) translateY(10px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .pop-in {
+      animation: popIn 0.28s cubic-bezier(0.22, 1.3, 0.36, 1) forwards;
+    }
+
+    #introVeil {
+      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.7s ease;
+    }
+
+    #introVeil.veil-dismissed {
+      opacity: 0;
+      transform: scale(1.03);
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    @keyframes spinClock {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .clock-spin {
+      animation: spinClock 7s linear infinite;
+    }
+
+    #feedVeil {
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.45s ease;
+    }
+
+    #feedVeilGlowOrb {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      left: 50%;
+      top: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      border-radius: 9999px;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(184, 255, 44, 0.16), rgba(56, 189, 248, 0.08) 52%, transparent 72%);
+      will-change: transform;
+      transition: transform 0.14s ease-out;
+    }
+
+    #feedVeil.feed-veil-hidden {
+      opacity: 0;
+      transform: scale(1.02);
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    #feedVeil.feed-veil-hidden #feedVeilGlowOrb {
+      display: none;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 15, 20, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+  </style>
+</head>
+<body data-theme="neon" class="min-h-screen antialiased selection:bg-lime-300 selection:text-zinc-950">
+
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+  </div>
+
+  <!-- STARTUP POSTER OVERLAY -->
+  <div id="introVeil" class="fixed inset-0 z-50 flex flex-col justify-between p-6 sm:p-10 bg-[#09090b]/92 backdrop-blur-2xl">
+    <div class="flex items-center justify-between max-w-6xl w-full mx-auto">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 border border-white/15 font-mono-code font-extrabold text-sm tracking-tighter">U/R</span>
+        <span class="font-extrabold tracking-tight text-lg">UNROT.</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="pyEngineStatusBadge" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono-code px-3 py-1 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-200">
+          <span class="h-1.5 w-1.5 rounded-full bg-amber-300 animate-ping"></span>
+          BOOTING PYTHON 3...
+        </span>
+        <span class="text-xs font-mono-code uppercase tracking-widest text-zinc-400">Anti-Brainrot Cognitive Arcade</span>
+      </div>
+    </div>
+
+    <div class="max-w-5xl w-full mx-auto my-auto py-8">
+      <p class="text-xs sm:text-sm font-mono-code uppercase tracking-[0.28em] text-[var(--accent-primary)] mb-3">
+        READY TO UNROT YOUR BRAIN?
+      </p>
+      <p class="text-xs sm:text-sm font-mono-code uppercase tracking-[0.22em] text-zinc-400 mb-4">
+        Attention isn’t gone — it’s just unexercised
+      </p>
+      <h1 class="text-5xl sm:text-7xl md:text-8xl font-black tracking-[-0.04em] leading-[0.95] uppercase">
+        <span class="block text-white">STOP SCROLLING.</span>
+        <span class="block text-white/90">START</span>
+        <span class="inline-flex items-center gap-3 sm:gap-5 text-[var(--accent-primary)]">
+          <span>FOCUSING</span>
+          <svg class="w-11 h-11 sm:w-16 sm:h-16 clock-spin text-[var(--accent-primary)] shrink-0" viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="32" r="27" stroke="currentColor" stroke-width="3.5" stroke-dasharray="10 7" />
+            <circle cx="32" cy="32" r="18" stroke="currentColor" stroke-width="2" opacity="0.45" />
+            <path d="M32 16V32L42 38" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="32" cy="32" r="3" fill="currentColor" />
+          </svg>
+        </span>
+      </h1>
+      <p class="mt-6 max-w-xl text-zinc-400 text-sm sm:text-base leading-relaxed">
+        Short-form dopamine hits wrapped around 10 deliberate cognitive drills. Train visual scanning, inhibition, working memory, reaction speed, pattern logic, mental math, time perception, tracking, mental rotation, and crowd composure.
+      </p>
+    </div>
+
+    <div class="max-w-5xl w-full mx-auto flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6">
+      <div class="flex flex-wrap items-center gap-3">
+        <button id="enterAppBtn" class="accent-btn px-7 py-3.5 rounded-full text-sm sm:text-base font-extrabold tracking-tight cursor-pointer inline-flex items-center gap-2 shadow-lg">
+          <span>TAP TO UNROT YOUR BRAIN</span>
+          <span aria-hidden="true">→</span>
+        </button>
+        <button id="replayIntroBtn" class="px-4 py-3 rounded-full text-xs font-mono-code uppercase tracking-wider bg-white/5 hover:bg-white/10 border border-white/15 text-zinc-200 transition cursor-pointer">
+          Replay Intro
+        </button>
+      </div>
+      <span class="text-xs font-mono-code text-zinc-400">10 Drills • Feed + 60s Sprint + Solo Arena • Local Telemetry</span>
+    </div>
+  </div>
+
+  <!-- MAIN APPLICATION SHELL -->
+  <div id="appShell" class="relative z-10 min-h-screen flex flex-col">
+
+    <!-- STICKY TOP BAR -->
+    <header class="sticky top-0 z-30 border-b border-white/10 bg-[#09090b]/75 backdrop-blur-xl">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+
+        <div class="flex items-center gap-3">
+          <button id="brandHomeBtn" class="flex items-center gap-2.5 text-left group cursor-pointer">
+            <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 border border-white/15 font-mono-code font-extrabold text-sm group-hover:scale-105 transition">U/R</span>
+            <div>
+              <div class="font-black tracking-tight text-base sm:text-lg leading-none flex items-center gap-2">
+                <span>UNROT.</span>
+              </div>
+              <div class="text-[10px] font-mono-code uppercase tracking-widest text-zinc-400 mt-0.5">Cognitive Arcade</div>
+            </div>
+          </button>
+        </div>
+
+        <nav aria-label="Primary Sections" class="glass-pill-track" id="mainNavTrack">
+          <div id="navSlidingPill" class="liquid-pill"></div>
+          <button data-tab="feed" class="nav-tab pill-btn active-pill px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Feed</button>
+          <button data-tab="games" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Games</button>
+          <button data-tab="sprint" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">60s Sprint</button>
+          <button data-tab="profile" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Brain Profile</button>
+          <button data-tab="leaderboard" class="nav-tab pill-btn px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300">Leaderboard</button>
+        </nav>
+
+        <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+          <div class="glass-pill-track" id="themeTrack" title="Visual Theme">
+            <div id="themeSlidingPill" class="liquid-pill-sm"></div>
+            <button data-theme-val="bw" class="theme-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">B&amp;W</button>
+            <button data-theme-val="neon" class="theme-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Neon</button>
+            <button data-theme-val="pastel" class="theme-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Pastel</button>
+          </div>
+
+          <div class="glass-pill-track" id="coachTrack" title="Coach Feedback Tone">
+            <div id="coachSlidingPill" class="liquid-pill-sm"></div>
+            <button data-coach-val="roast" class="coach-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Roast</button>
+            <button data-coach-val="chill" class="coach-pill pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Chill</button>
+          </div>
+
+          <button id="chaosToggleBtn" class="px-3 py-1.5 rounded-full text-[11px] font-mono-code uppercase tracking-wider border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 transition cursor-pointer" title="Toggle Chaos Mode Popups">
+            Chaos: OFF
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- LIVE TELEMETRY HUD STRIP -->
+    <div class="border-b border-white/10 bg-black/35 backdrop-blur-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 text-xs font-mono-code">
+        <div class="flex flex-wrap items-center gap-4 sm:gap-6">
+          <div>
+            <span class="text-zinc-400">SCORE</span>
+            <span id="hudScore" class="ml-1.5 font-extrabold text-white text-sm">0</span>
+          </div>
+          <div>
+            <span class="text-zinc-400">STREAK</span>
+            <span id="hudStreak" class="ml-1.5 font-extrabold text-[var(--accent-primary)] text-sm">0</span>
+          </div>
+          <div>
+            <span class="text-zinc-400">BEST</span>
+            <span id="hudBest" class="ml-1.5 font-extrabold text-zinc-200 text-sm">0</span>
+          </div>
+          <div>
+            <span class="text-zinc-400">TIER</span>
+            <span id="hudTier" class="ml-1.5 font-extrabold text-[var(--accent-secondary)] text-sm">LOWKEY (1.0×)</span>
+          </div>
+          <div>
+            <span class="text-zinc-400">SHIELDS</span>
+            <span id="hudShields" class="ml-1.5 font-extrabold text-amber-300 text-sm">0</span>
+          </div>
+        </div>
+        <div id="hudStatusText" class="text-zinc-300 truncate max-w-md">
+          Choose Feed, Games, or 60s Sprint to begin.
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+      <!-- ==================== 1. FEED SECTION ==================== -->
+      <section id="view-feed" class="app-view view-animate">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          <div class="lg:col-span-8">
+            <div class="glass-panel rounded-3xl p-5 sm:p-7 relative overflow-hidden">
+
+              <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span id="feedGameBadge" class="px-3 py-1 rounded-full text-xs font-mono-code uppercase tracking-wider bg-white/10 border border-white/15 text-[var(--accent-primary)] font-bold">
+                    SCHULTE TABLE
+                  </span>
+                  <span id="feedSubBadge" class="text-xs font-mono-code text-zinc-400">4×4 Grid (1→16)</span>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-[11px] font-mono-code uppercase text-zinc-400 hidden sm:inline">Vibe</span>
+                  <div class="glass-pill-track" id="feedDiffTrack" title="Feed Difficulty Tier">
+                    <div id="feedDiffSlidingPill" class="liquid-pill-sm"></div>
+                    <button data-feed-diff="lowkey" class="feed-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Lowkey</button>
+                    <button data-feed-diff="locked_in" class="feed-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Locked In</button>
+                    <button data-feed-diff="cooked" class="feed-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Cooked</button>
+                  </div>
+                  <span id="feedClockReadout" class="font-mono-code text-xs sm:text-sm font-bold px-2.5 py-1 rounded-lg bg-black/40 border border-white/10 text-zinc-200">
+                    15.0s
+                  </span>
+                </div>
+              </div>
+
+              <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden mb-6">
+                <div id="feedTimerBar" class="h-full w-full rounded-full bg-[var(--accent-primary)]" style="transform: scaleX(1);"></div>
+              </div>
+
+              <div id="feedStageContainer" class="relative min-h-[390px] flex flex-col justify-center">
+                <div id="feedCardMount" class="card-enter"></div>
+
+                <div id="feedVeil" class="fixed inset-0 z-40 flex flex-col items-center justify-center p-6 text-center bg-[#09090b]/82 backdrop-blur-xl">
+                  <div id="feedVeilGlowOrb" aria-hidden="true"></div>
+                  <div class="relative z-10 max-w-md">
+                    <span class="inline-block text-[11px] font-mono-code uppercase tracking-[0.25em] text-[var(--accent-primary)] mb-2">
+                      Dopamine Loop Paused
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-2">Ready for the next cognitive reel?</h2>
+                    <p class="text-sm text-zinc-300 mb-6">
+                      Each reel drops a fresh micro-challenge across all 10 brain drills. Stay sharp before the bar runs out.
+                    </p>
+                    <button id="startFeedBtn" class="accent-btn px-7 py-3 rounded-full text-sm font-extrabold uppercase tracking-wider cursor-pointer">
+                      Start Feed Loop
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+                <div id="feedCoachLine" class="text-xs sm:text-sm text-zinc-300 italic">
+                  “Scroll less. Notice more.”
+                </div>
+                <div class="flex items-center gap-2">
+                  <button id="stopFeedBtn" class="px-3.5 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/35 text-rose-200 transition cursor-pointer">
+                    Stop ■
+                  </button>
+                  <button id="nextReelBtn" class="px-4 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold transition cursor-pointer">
+                    Next Reel ↑
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <aside class="lg:col-span-4 space-y-5">
+            <div class="glass-panel rounded-3xl p-5">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-mono-code uppercase tracking-widest text-zinc-400">Session Pulse</h3>
+                <span id="feedRoundCounter" class="text-xs font-mono-code text-[var(--accent-primary)] font-bold">REEL #1</span>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="rounded-2xl bg-black/35 border border-white/10 p-3.5">
+                  <div class="text-[11px] font-mono-code text-zinc-400">ACCURACY</div>
+                  <div id="feedAccuracyStat" class="text-2xl font-black mt-1">100%</div>
+                </div>
+                <div class="rounded-2xl bg-black/35 border border-white/10 p-3.5">
+                  <div class="text-[11px] font-mono-code text-zinc-400">AVG SPEED</div>
+                  <div id="feedAvgSpeedStat" class="text-2xl font-black mt-1">—</div>
+                </div>
+              </div>
+              <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+                <span class="text-zinc-400">Focus Shield (every 5 streak)</span>
+                <span id="feedShieldProgress" class="font-mono-code font-bold text-amber-300">0 / 5</span>
+              </div>
+            </div>
+
+            <div class="glass-panel rounded-3xl p-5">
+              <h3 class="text-xs font-mono-code uppercase tracking-widest text-zinc-400 mb-3">Active Rules</h3>
+              <ul class="space-y-2.5 text-xs text-zinc-300 leading-relaxed">
+                <li class="flex gap-2">
+                  <span class="text-[var(--accent-primary)] font-bold">01</span>
+                  <span><strong class="text-white">Lowkey (1.0×):</strong> 15.0s reel clock, real baseline challenge across all 10 games.</span>
+                </li>
+                <li class="flex gap-2">
+                  <span class="text-[var(--accent-primary)] font-bold">02</span>
+                  <span><strong class="text-white">Locked In (1.25×):</strong> 13.5s reel clock, faster rhythms, reverse/diagonal/multi-step twists.</span>
+                </li>
+                <li class="flex gap-2">
+                  <span class="text-[var(--accent-primary)] font-bold">03</span>
+                  <span><strong class="text-white">Cooked (1.5×):</strong> 12.0s reel clock, 4×5 Schulte grid, inverted/decoy/high-swarm drills.</span>
+                </li>
+                <li class="flex gap-2">
+                  <span class="text-[var(--accent-primary)] font-bold">04</span>
+                  <span>Every <strong class="text-white">5 streak</strong> earns a <strong class="text-amber-300">Focus Shield</strong> that absorbs one mistake.</span>
+                </li>
+              </ul>
+            </div>
+          </aside>
+
+        </div>
+      </section>
+
+      <!-- ==================== 2. GAMES (SOLO ARENA) ==================== -->
+      <section id="view-games" class="app-view hidden">
+        <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
+          <div>
+            <p class="text-xs font-mono-code uppercase tracking-widest text-[var(--accent-primary)]">Solo Training Arena</p>
+            <h2 class="text-2xl sm:text-4xl font-black tracking-tight mt-1">10 Cognitive Drills</h2>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-400 max-w-md">
+            Pick any drill and select your difficulty vibe (<strong class="text-zinc-200">Lowkey</strong>, <strong class="text-zinc-200">Locked In</strong>, or <strong class="text-zinc-200">Cooked</strong>) to train with live PR tracking.
+          </p>
+        </div>
+
+        <div id="bentoGridView" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+
+          <button data-game-select="schulte" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
+                <span>01 • SCANNING</span>
+                <span class="text-[var(--accent-primary)] group-hover:translate-x-0.5 transition">PLAY →</span>
+              </div>
+              <h3 class="text-lg font-extrabold tracking-tight">Schulte Table</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">Scan sequentially across 4×4, Reverse 16→1, or 4×5 grids under pressure.</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-code">
+              <span class="text-zinc-400">PR</span>
+              <span id="pr-badge-schulte" class="text-amber-300 font-bold">—</span>
+            </div>
+          </button>
+
+          <button data-game-select="stroop" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
+                <span>02 • INHIBITION</span>
+                <span class="text-[var(--accent-primary)] group-hover:translate-x-0.5 transition">PLAY →</span>
+              </div>
+              <h3 class="text-lg font-extrabold tracking-tight">Stroop Trap</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">Ignore what the word says; match ink color or obey INVERT rules.</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-code">
+              <span class="text-zinc-400">PR</span>
+              <span id="pr-badge-stroop" class="text-amber-300 font-bold">—</span>
+            </div>
+          </button>
+
+          <button data-game-select="grid" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
+                <span>03 • MEMORY</span>
+                <span class="text-[var(--accent-primary)] group-hover:translate-x-0.5 transition">PLAY →</span>
+              </div>
+              <h3 class="text-lg font-extrabold tracking-tight">Flash Grid</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">Memorize flashed spatial nodes and reconstruct the pattern accurately.</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-code">
+              <span class="text-zinc-400">PR</span>
+              <span id="pr-badge-grid" class="text-amber-300 font-bold">—</span>
+            </div>
+          </button>
+
+          <button data-game-select="reflex" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
+                <span>04 • REFLEX</span>
+                <span class="text-[var(--accent-primary)] group-hover:translate-x-0.5 transition">PLAY →</span>
+              </div>
+              <h3 class="text-lg font-extrabold tracking-tight">Reflex Snap</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">Strike the instant the signal flips green; dodge crimson fakeouts.</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-code">
+              <span class="text-zinc-400">PR</span>
+              <span id="pr-badge-reflex" class="text-amber-300 font-bold">—</span>
+            </div>
+          </button>
+
+          <button data-game-select="logic" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
+                <span>05 • PATTERNS</span>
+                <span class="text-[var(--accent-primary)] group-hover:translate-x-0.5 transition">PLAY →</span>
+              </div>
+              <h3 class="text-lg font-extrabold tracking-tight">Logic Blitz</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">Deduce the hidden mathematical rule and predict the next term.</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-code">
+              <span class="text-zinc-400">PR</span>
+              <span id="pr-badge-logic" class="text-amber-300 font-bold">—</span>
+            </div>
+          </button>
+
+          <button data-game-select="mathblitz" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
+                <span>06 • ARITHMETIC</span>
+                <span class="text-[var(--accent-primary)] group-hover:translate-x-0.5 transition">PLAY →</span>
+              </div>
+              <h3 class="text-lg font-extrabold tracking-tight">Math Blitz</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">Rapid-fire equations and missing-number chains under a tight clock.</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-code">
+              <span class="text-zinc-400">PR</span>
+              <span id="pr-badge-mathblitz" class="text-amber-300 font-bold">—</span>
+            </div>
+          </button>
+
+          <button data-game-select="timeblind" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
+                <span>07 • TIMING</span>
+                <span class="text-[var(--accent-primary)] group-hover:translate-x-0.5 transition">PLAY →</span>
+              </div>
+              <h3 class="text-lg font-extrabold tracking-tight">Time Blind</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">Count internally after the clock blacks out and stop right on target.</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-code">
+              <span class="text-zinc-400">PR</span>
+              <span id="pr-badge-timeblind" class="text-amber-300 font-bold">—</span>
+            </div>
+          </button>
+
+          <button data-game-select="ghosttrack" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
+                <span>08 • TRACKING</span>
+                <span class="text-[var(--accent-primary)] group-hover:translate-x-0.5 transition">PLAY →</span>
+              </div>
+              <h3 class="text-lg font-extrabold tracking-tight">Ghost Track</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">Track marked orbs through drifting traffic and pick them after motion stops.</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-code">
+              <span class="text-zinc-400">PR</span>
+              <span id="pr-badge-ghosttrack" class="text-amber-300 font-bold">—</span>
+            </div>
+          </button>
+
+          <button data-game-select="mirrortrap" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
+                <span>09 • ROTATION</span>
+                <span class="text-[var(--accent-primary)] group-hover:translate-x-0.5 transition">PLAY →</span>
+              </div>
+              <h3 class="text-lg font-extrabold tracking-tight">Mirror Trap</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">Spot true rotations vs. mirrored impostors across angled shapes.</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-code">
+              <span class="text-zinc-400">PR</span>
+              <span id="pr-badge-mirrortrap" class="text-amber-300 font-bold">—</span>
+            </div>
+          </button>
+
+          <button data-game-select="herdtrap" class="bento-card glass-panel rounded-3xl p-5 text-left flex flex-col justify-between cursor-pointer group">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-code text-zinc-400 mb-3">
+                <span>10 • CROWD SIGNAL</span>
+                <span class="text-[var(--accent-primary)] group-hover:translate-x-0.5 transition">PLAY →</span>
+              </div>
+              <h3 class="text-lg font-extrabold tracking-tight">Herd Trap</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">Follow the majority swarm direction—unless a red wave flips the rule.</p>
+            </div>
+            <div class="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-code">
+              <span class="text-zinc-400">PR</span>
+              <span id="pr-badge-herdtrap" class="text-amber-300 font-bold">—</span>
+            </div>
+          </button>
+
+        </div>
+
+        <!-- SOLO GAME STAGE -->
+        <div id="soloStageView" class="hidden">
+          <div class="glass-panel rounded-3xl p-5 sm:p-7">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-white/10">
+              <div class="flex flex-wrap items-center gap-3">
+                <button id="backToGamesBtn" class="px-3.5 py-1.5 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 transition cursor-pointer">
+                  ← All Games
+                </button>
+                <div>
+                  <h3 id="soloGameTitle" class="text-xl font-black tracking-tight">Game Title</h3>
+                  <p id="soloGameDesc" class="text-xs text-zinc-400">Drill description</p>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2.5">
+                <div class="glass-pill-track" id="soloDiffTrack" title="Solo Difficulty Tier">
+                  <div id="soloDiffSlidingPill" class="liquid-pill-sm"></div>
+                  <button data-solo-diff="lowkey" class="solo-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Lowkey</button>
+                  <button data-solo-diff="locked_in" class="solo-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Locked In</button>
+                  <button data-solo-diff="cooked" class="solo-diff-btn pill-btn px-2.5 py-1 rounded-full text-[11px] font-mono-code text-zinc-300">Cooked</button>
+                </div>
+
+                <span id="soloPrDisplay" class="text-xs font-mono-code px-3 py-1.5 rounded-xl bg-amber-400/15 border border-amber-300/30 text-amber-200 font-bold">
+                  PR: —
+                </span>
+                <button id="soloRestartBtn" class="px-3.5 py-1.5 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 transition cursor-pointer">
+                  New Round ↻
+                </button>
+              </div>
+            </div>
+
+            <div id="soloCardMount" class="min-h-[360px] flex flex-col justify-center"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 3. 60s SPRINT ==================== -->
+      <section id="view-sprint" class="app-view hidden">
+        <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-4xl mx-auto">
+          <div class="flex flex-wrap items-center justify-between gap-4 pb-5 mb-6 border-b border-white/10">
+            <div>
+              <span class="text-xs font-mono-code uppercase tracking-widest text-[var(--accent-secondary)]">Time-Attack Gauntlet</span>
+              <h2 class="text-2xl sm:text-3xl font-black tracking-tight mt-1">60-Second Focus Sprint</h2>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="text-right">
+                <div class="text-[10px] font-mono-code uppercase text-zinc-400">Clock</div>
+                <div id="sprintTimerDisplay" class="text-2xl sm:text-3xl font-black font-mono-code text-[var(--accent-primary)]">60.0s</div>
+              </div>
+              <div class="text-right">
+                <div class="text-[10px] font-mono-code uppercase text-zinc-400">Cleared</div>
+                <div id="sprintClearedDisplay" class="text-2xl sm:text-3xl font-black font-mono-code text-white">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="sprintLobby" class="text-center py-8">
+            <p class="text-zinc-300 max-w-lg mx-auto text-sm sm:text-base leading-relaxed mb-6">
+              Sixty seconds on the clock. Solve rapid-fire micro-drills back-to-back across scanning, inhibition, logic, math, rotation, and crowd signals. Speed + accuracy build your sprint score.
+            </p>
+            <button id="startSprintBtn" class="accent-btn px-8 py-3.5 rounded-full text-sm font-extrabold uppercase tracking-wider cursor-pointer">
+              Start 60s Sprint
+            </button>
+          </div>
+
+          <div id="sprintActiveStage" class="hidden">
+            <div id="sprintCardMount" class="min-h-[340px] flex flex-col justify-center"></div>
+          </div>
+
+          <div id="sprintSummaryBox" class="hidden text-center py-8">
+            <span class="text-xs font-mono-code uppercase tracking-widest text-[var(--accent-primary)]">Sprint Complete</span>
+            <h3 class="text-3xl sm:text-4xl font-black mt-2" id="sprintFinalScoreText">0 PTS</h3>
+            <p id="sprintSummaryStats" class="text-sm text-zinc-300 mt-2 mb-6"></p>
+            <button id="restartSprintBtn" class="accent-btn px-7 py-3 rounded-full text-sm font-extrabold uppercase tracking-wider cursor-pointer">
+              Run Another 60s Sprint
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 4. BRAIN PROFILE ==================== -->
+      <section id="view-profile" class="app-view hidden">
+        <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
+          <div>
+            <p class="text-xs font-mono-code uppercase tracking-widest text-[var(--accent-primary)]">Cognitive Telemetry</p>
+            <h2 class="text-2xl sm:text-4xl font-black tracking-tight mt-1">Your Brain Profile</h2>
+          </div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <button id="exportCsvBtn" class="px-4 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-white/10 hover:bg-white/15 border border-white/15 transition cursor-pointer">
+              Export Python CSV
+            </button>
+            <button id="resetProgressBtn" class="px-4 py-2 rounded-xl text-xs font-mono-code uppercase tracking-wider bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/30 text-rose-200 transition cursor-pointer">
+              Reset Data
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          <div class="lg:col-span-5 glass-panel rounded-3xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-mono-code uppercase tracking-widest text-zinc-400">UNROT Brain Index</span>
+                <span id="profileTrendBadge" class="text-xs font-mono-code px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300 font-bold">STEADY —</span>
+              </div>
+              <div class="flex items-baseline gap-3 mt-3">
+                <span id="brainIndexScore" class="text-5xl sm:text-6xl font-black tracking-tight text-[var(--accent-primary)]">—</span>
+                <span class="text-sm font-mono-code text-zinc-400">/ 100</span>
+              </div>
+              <div id="brainRankLabel" class="text-sm font-bold text-white mt-2">Unranked — Play Any Drill</div>
+              <p id="brainInsightText" class="text-xs sm:text-sm text-zinc-300 mt-2 leading-relaxed">
+                Play rounds in the Feed, Solo Arena, or 60s Sprint—your Brain Index dynamically rises when you win fast and drops when you miss.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-white/10 grid grid-cols-3 gap-2 text-center">
+              <div>
+                <div class="text-[10px] font-mono-code text-zinc-400">ROUNDS</div>
+                <div id="profileTotalRounds" class="text-lg font-extrabold mt-0.5">0</div>
+              </div>
+              <div>
+                <div class="text-[10px] font-mono-code text-zinc-400">WIN RATE</div>
+                <div id="profileWinRate" class="text-lg font-extrabold mt-0.5 text-emerald-300">—</div>
+              </div>
+              <div>
+                <div class="text-[10px] font-mono-code text-zinc-400">BEST STREAK</div>
+                <div id="profileBestStreak" class="text-lg font-extrabold mt-0.5 text-[var(--accent-primary)]">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7 glass-panel rounded-3xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xs font-mono-code uppercase tracking-widest text-zinc-400">10-Domain Skill Breakdown</h3>
+              <span id="profilePlayedCount" class="text-xs font-mono-code text-zinc-400">0/10 DRILLS TESTED</span>
+            </div>
+            <div id="skillBarsContainer" class="space-y-3"></div>
+          </div>
+        </div>
+
+        <div id="pillarKpiGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5"></div>
+      </section>
+
+      <!-- ==================== 5. LEADERBOARD ==================== -->
+      <section id="view-leaderboard" class="app-view hidden">
+        <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-4xl mx-auto">
+          <div class="flex flex-wrap items-center justify-between gap-4 pb-5 mb-6 border-b border-white/10">
+            <div>
+              <p class="text-xs font-mono-code uppercase tracking-widest text-[var(--accent-primary)]">Local Hall of Focus</p>
+              <h2 class="text-2xl sm:text-3xl font-black tracking-tight mt-1">Leaderboard</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <input id="playerCallsignInput" type="text" maxlength="16" placeholder="Your callsign..." class="px-3.5 py-2 rounded-xl text-xs font-mono-code bg-black/45 border border-white/15 text-white placeholder:text-zinc-500 focus:outline-none focus:border-[var(--accent-primary)]" />
+              <button id="saveScoreToBoardBtn" class="accent-btn px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider cursor-pointer">
+                Log Current Score
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-white/10 text-[11px] font-mono-code uppercase text-zinc-400">
+                  <th class="py-3 px-3">Rank</th>
+                  <th class="py-3 px-3">Player</th>
+                  <th class="py-3 px-3">Mode</th>
+                  <th class="py-3 px-3">Best Streak</th>
+                  <th class="py-3 px-3 text-right">Score</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboardBody" class="divide-y divide-white/5 text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-white/10 py-5 px-4 sm:px-6 text-xs text-zinc-400">
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+        <span>UNROT. — Deliberate cognitive drills in a short-form loop.</span>
+        <span class="font-mono-code">Keys: 1–4 Answer • Space Next/Snap • Esc Veil</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- CHAOS MODE FLOATING POPUP -->
+  <div id="chaosPopup" class="hidden fixed bottom-5 right-5 z-40 max-w-xs glass-panel rounded-2xl p-4 border border-[var(--accent-tertiary)]/50 pop-in">
+    <div class="flex items-center justify-between gap-2 mb-1">
+      <span class="text-[10px] font-mono-code uppercase tracking-widest text-[var(--accent-tertiary)] font-bold">⚡ Chaos Interrupt</span>
+      <button id="dismissChaosBtn" class="text-xs text-zinc-400 hover:text-white cursor-pointer">✕</button>
+    </div>
+    <p id="chaosPopupText" class="text-xs text-zinc-200 leading-relaxed"></p>
+  </div>
+
+  <!-- ==================== PYTHON 3 COGNITIVE ENGINE (PYODIDE) ==================== -->
+  <script type="text/python" id="unrot-python-engine">
+import csv
+import io
+import json
+import math
+import random
+
+GAME_KEYS = [
+    "schulte", "stroop", "grid", "reflex", "logic",
+    "mathblitz", "timeblind", "ghosttrack", "mirrortrap", "herdtrap"
+]
+
+GAME_LABELS = {
+    "schulte": "Schulte Table",
+    "stroop": "Stroop Trap",
+    "grid": "Flash Grid",
+    "reflex": "Reflex Snap",
+    "logic": "Logic Blitz",
+    "mathblitz": "Math Blitz",
+    "timeblind": "Time Blind",
+    "ghosttrack": "Ghost Track",
+    "mirrortrap": "Mirror Trap",
+    "herdtrap": "Herd Trap",
+}
+
+DIFF_CONFIG = {
+    "lowkey": {
+        "key": "lowkey",
+        "label": "Lowkey",
+        "multiplier": 1.0,
+        "feed_seconds": 15.0,
+        "hud_label": "LOWKEY (1.0×)",
+    },
+    "locked_in": {
+        "key": "locked_in",
+        "label": "Locked In",
+        "multiplier": 1.25,
+        "feed_seconds": 13.5,
+        "hud_label": "LOCKED IN (1.25×)",
+    },
+    "cooked": {
+        "key": "cooked",
+        "label": "Cooked",
+        "multiplier": 1.5,
+        "feed_seconds": 12.0,
+        "hud_label": "COOKED (1.5×)",
+    },
+}
+
+PAR_MS = {
+    "schulte": 8500.0,
+    "stroop": 2600.0,
+    "grid": 3600.0,
+    "reflex": 650.0,
+    "logic": 3800.0,
+    "mathblitz": 5200.0,
+    "timeblind": 4500.0,
+    "ghosttrack": 4800.0,
+    "mirrortrap": 3800.0,
+    "herdtrap": 3200.0,
+}
+
+STROOP_PALETTE = [
+    {"name": "RED", "hex": "#fb7185"},
+    {"name": "BLUE", "hex": "#38bdf8"},
+    {"name": "GREEN", "hex": "#34d399"},
+    {"name": "AMBER", "hex": "#fbbf24"},
+    {"name": "PURPLE", "hex": "#c084fc"},
+    {"name": "CYAN", "hex": "#22d3ee"},
+]
+
+BASE_SHAPES = {
+    "L-Tetromino": [(0, 0), (0, 1), (0, 2), (1, 2)],
+    "Z-Shape": [(0, 0), (1, 0), (1, 1), (2, 1)],
+    "Hook-5": [(0, 0), (1, 0), (2, 0), (2, 1), (2, 2)],
+    "Step-5": [(0, 0), (0, 1), (1, 1), (1, 2), (2, 2)],
+    "Cross-6": [(1, 0), (0, 1), (1, 1), (2, 1), (1, 2), (2, 2)],
+    "Key-6": [(0, 0), (1, 0), (2, 0), (1, 1), (1, 2), (2, 2)],
+}
+
+COACH_QUOTES = {
+    "roast": {
+        "win": [
+            "Okay, two neurons showed up to work.",
+            "Bare minimum competence achieved. Do it again.",
+            "Your attention span didn't implode that time. Shocking.",
+            "Clean hit. Don't let it go to your head.",
+        ],
+        "lose": [
+            "Your thumb moved faster than your frontal lobe.",
+            "The algorithm sends its regards. Try looking first.",
+            "Oof. Even an idle browser tab held more focus than that.",
+            "Missed it. Blinking doesn't count as thinking.",
+        ],
+        "shield": [
+            "Focus Shield absorbed the hit. Lucky crutch.",
+            "Saved by a shield—don't get sloppy.",
+        ],
+    },
+    "chill": {
+        "win": [
+            "Smooth read. Steady eyes, calm pace.",
+            "Locked in nicely—keep that rhythm flowing.",
+            "Clean execution. Your focus is compounding.",
+            "Nice composure under the clock.",
+        ],
+        "lose": [
+            "Close one—reset your eyes and take the next reel.",
+            "No stress. Every miss shows where to sharpen next.",
+            "Shake it off and lock into the next pattern.",
+            "Tough timing—you've got the next one.",
+        ],
+        "shield": [
+            "Focus Shield stepped in and kept your streak alive.",
+            "Shield activated—streak protected.",
+        ],
+    },
+}
+
+
+def norm_diff(diff_key):
+    return diff_key if diff_key in DIFF_CONFIG else "lowkey"
+
+
+def get_diff_meta(diff_key):
+    return DIFF_CONFIG[norm_diff(diff_key)]
+
+
+def _shuffle(items):
+    arr = list(items)
+    random.shuffle(arr)
+    return arr
+
+
+def _make_options(correct_val, distractors):
+    pool = [correct_val]
+    for d in distractors:
+        if d not in pool:
+            pool.append(d)
+    fallback = 1
+    while len(pool) < 4:
+        cand = correct_val + fallback if isinstance(correct_val, int) else f"Opt {fallback}"
+        if cand not in pool:
+            pool.append(cand)
+        fallback += 1
+    opts = _shuffle(pool[:4])
+    return opts, opts.index(correct_val)
+
+
+def generate_schulte(diff_key):
+    d = norm_diff(diff_key)
+    if d == "cooked":
+        rows, cols, mode = 4, 5, "ascending"
+        total = rows * cols
+        nums = list(range(1, total + 1))
+        sequence = list(range(1, total + 1))
+        sub_label = "4×5 Grid (1→20 • Max 3 Misses)"
+        max_mistakes = 3
+    elif d == "locked_in":
+        rows, cols, mode = 4, 4, "descending"
+        total = rows * cols
+        nums = list(range(1, total + 1))
+        sequence = list(range(total, 0, -1))
+        sub_label = "4×4 Reverse (16→1)"
+        max_mistakes = 99
+    else:
+        rows, cols, mode = 4, 4, "ascending"
+        total = rows * cols
+        nums = list(range(1, total + 1))
+        sequence = list(range(1, total + 1))
+        sub_label = "4×4 Grid (1→16)"
+        max_mistakes = 99
+
+    return {
+        "game": "schulte",
+        "diff": d,
+        "subLabel": sub_label,
+        "rows": rows,
+        "cols": cols,
+        "mode": mode,
+        "cells": _shuffle(nums),
+        "sequence": sequence,
+        "maxMistakes": max_mistakes,
+    }
+
+
+def generate_stroop(diff_key):
+    d = norm_diff(diff_key)
+    palette_slice = STROOP_PALETTE[:4] if d == "lowkey" else (STROOP_PALETTE[:5] if d == "locked_in" else STROOP_PALETTE)
+    rounds_count = 2 if d == "lowkey" else (3 if d == "locked_in" else 4)
+    allow_invert = (d == "cooked")
+    mismatch_buttons = (d != "lowkey")
+
+    sub_map = {
+        "lowkey": "2-Step Ink vs. Word",
+        "locked_in": "3-Step • Mismatched Swatches",
+        "cooked": "4-Step • Includes INVERT Rule",
+    }
+
+    rounds = []
+    for _ in range(rounds_count):
+        word_obj = random.choice(palette_slice)
+        ink_obj = random.choice([c for c in palette_slice if c["name"] != word_obj["name"]])
+        mode = "match_word" if (allow_invert and random.random() < 0.35) else "match_ink"
+        target_obj = word_obj if mode == "match_word" else ink_obj
+
+        btn_colors = _shuffle([c["name"] for c in palette_slice[:4]])
+        if target_obj["name"] not in btn_colors:
+            btn_colors[0] = target_obj["name"]
+            btn_colors = _shuffle(btn_colors)
+
+        choices = []
+        for idx, b_name in enumerate(btn_colors):
+            swatch_hex = "#e4e4e7"
+            if mismatch_buttons:
+                other_swatches = [c["hex"] for c in palette_slice if c["name"] != b_name]
+                swatch_hex = random.choice(other_swatches) if other_swatches else "#e4e4e7"
+            else:
+                matched = next((c["hex"] for c in palette_slice if c["name"] == b_name), "#e4e4e7")
+                swatch_hex = matched
+            choices.append({
+                "label": b_name,
+                "swatchHex": swatch_hex,
+                "isCorrect": (b_name == target_obj["name"]),
+                "index": idx,
+            })
+
+        rounds.append({
+            "word": word_obj["name"],
+            "inkHex": ink_obj["hex"],
+            "mode": mode,
+            "choices": choices,
+        })
+
+    return {
+        "game": "stroop",
+        "diff": d,
+        "subLabel": sub_map[d],
+        "rounds": rounds,
+    }
+
+
+def generate_grid(diff_key):
+    d = norm_diff(diff_key)
+    if d == "lowkey":
+        size, count, flash_ms, max_mistakes = 3, 4, 1050, 1
+        sub_label = "3×3 Grid • 4 Tiles"
+    elif d == "locked_in":
+        size, count, flash_ms, max_mistakes = 4, 5, 900, 1
+        sub_label = "4×4 Grid • 5 Tiles"
+    else:
+        size, count, flash_ms, max_mistakes = 4, 6, 720, 0
+        sub_label = "4×4 Grid • 6 Tiles (Zero Misses)"
+
+    indices = _shuffle(range(size * size))[:count]
+    return {
+        "game": "grid",
+        "diff": d,
+        "subLabel": sub_label,
+        "size": size,
+        "targets": sorted(indices),
+        "flashMs": flash_ms,
+        "maxMistakes": max_mistakes,
+    }
+
+
+def generate_reflex(diff_key):
+    d = norm_diff(diff_key)
+    if d == "lowkey":
+        max_ms, fakeouts, sub_label = 430, 0, "Beat 430ms When Green"
+    elif d == "locked_in":
+        max_ms, fakeouts, sub_label = 350, 1, "Beat 350ms • Red Fakeout"
+    else:
+        max_ms, fakeouts, sub_label = 285, 2, "Beat 285ms • Multi-Fakeout"
+
+    delay_ms = random.randint(1150, 2350)
+    return {
+        "game": "reflex",
+        "diff": d,
+        "subLabel": sub_label,
+        "delayMs": delay_ms,
+        "maxMs": max_ms,
+        "fakeouts": fakeouts,
+    }
+
+
+def generate_logic(diff_key):
+    d = norm_diff(diff_key)
+    kind = random.choice(["arith", "geom", "step_up"]) if d == "lowkey" else (
+        random.choice(["step_up", "fib_like", "mul_add"]) if d == "locked_in" else
+        random.choice(["alternating", "squares_shift", "mul_add"])
+    )
+
+    if kind == "arith":
+        start = random.randint(4, 24)
+        step = random.choice([3, 4, 5, 6, 7])
+        seq = [start + i * step for i in range(4)]
+        ans = start + 4 * step
+        rule_hint = f"+{step} step"
+    elif kind == "geom":
+        start = random.choice([2, 3, 4])
+        seq = [start * (2 ** i) for i in range(4)]
+        ans = start * (2 ** 4)
+        rule_hint = "×2 progression"
+    elif kind == "step_up":
+        start = random.randint(3, 15)
+        base_step = random.randint(2, 4)
+        seq = [start]
+        cur = start
+        for i in range(1, 4):
+            cur += i * base_step
+            seq.append(cur)
+        ans = cur + 4 * base_step
+        rule_hint = f"Accelerating +{base_step}n"
+    elif kind == "fib_like":
+        a = random.randint(2, 7)
+        b = random.randint(3, 9)
+        seq = [a, b, a + b, b + (a + b)]
+        ans = seq[2] + seq[3]
+        rule_hint = "Sum of previous two"
+    elif kind == "squares_shift":
+        offset = random.randint(1, 6)
+        seq = [(i + 2) ** 2 + offset for i in range(4)]
+        ans = (6 ** 2) + offset
+        rule_hint = "n² + offset"
+    else:
+        a = random.randint(4, 14)
+        b = random.randint(12, 30)
+        inc_a = random.randint(4, 9)
+        inc_b = random.randint(5, 11)
+        seq = [a, b, a + inc_a, b + inc_b]
+        ans = seq[2] + inc_a
+        rule_hint = "Two interleaved tracks"
+
+    distractors = [
+        ans + random.choice([2, 3, 4, 6]),
+        ans - random.choice([2, 3, 4, 5]),
+        ans + random.choice([7, 9, 11]),
+    ]
+    options, correct_idx = _make_options(ans, distractors)
+    sub_map = {
+        "lowkey": "Core Sequence",
+        "locked_in": "Compound Progression",
+        "cooked": "High-Order Pattern",
+    }
+    return {
+        "game": "logic",
+        "diff": d,
+        "subLabel": f"{sub_map[d]} • {rule_hint}",
+        "sequence": seq,
+        "options": options,
+        "correctIndex": correct_idx,
+    }
+
+
+def generate_mathblitz(diff_key):
+    d = norm_diff(diff_key)
+    q_count = 3
+    questions = []
+
+    for _ in range(q_count):
+        if d == "lowkey":
+            q_type = random.choice(["add", "sub", "mul"])
+            if q_type == "add":
+                a, b = random.randint(12, 45), random.randint(8, 35)
+                prompt, ans = f"{a} + {b}", a + b
+            elif q_type == "sub":
+                a = random.randint(25, 75)
+                b = random.randint(8, min(28, a - 5))
+                prompt, ans = f"{a} − {b}", a - b
+            else:
+                a, b = random.randint(3, 10), random.randint(3, 9)
+                prompt, ans = f"{a} × {b}", a * b
+        elif d == "locked_in":
+            q_type = random.choice(["mul_add", "div", "missing"])
+            if q_type == "mul_add":
+                a, b, c = random.randint(3, 9), random.randint(2, 6), random.randint(4, 18)
+                prompt, ans = f"({a} × {b}) + {c}", a * b + c
+            elif q_type == "div":
+                b = random.randint(3, 9)
+                ans = random.randint(6, 16)
+                prompt = f"{b * ans} ÷ {b}"
+            else:
+                a = random.randint(15, 48)
+                ans = random.randint(12, 34)
+                prompt = f"{a} + ? = {a + ans}"
+        else:
+            q_type = random.choice(["mul_sub", "add_mul", "missing_mul"])
+            if q_type == "mul_sub":
+                a, b, c = random.randint(4, 11), random.randint(3, 8), random.randint(3, 14)
+                prompt, ans = f"({a} × {b}) − {c}", a * b - c
+            elif q_type == "add_mul":
+                a, b, c = random.randint(6, 18), random.randint(8, 18), random.randint(2, 5)
+                prompt, ans = f"({a} + {b}) × {c}", (a + b) * c
+            else:
+                b = random.randint(3, 9)
+                ans = random.randint(5, 13)
+                prompt = f"? × {b} = {ans * b}"
+
+        distractors = [ans + 1, ans - 1, ans + 2, ans - 2]
+        options, correct_idx = _make_options(ans, distractors)
+        questions.append({
+            "prompt": prompt,
+            "options": options,
+            "correctIndex": correct_idx,
+        })
+
+    sub_map = {
+        "lowkey": "3 Snappy Equations",
+        "locked_in": "3 Multi-Step Drills",
+        "cooked": "3 Fast Chains (±1/±2 Traps)",
+    }
+    return {
+        "game": "mathblitz",
+        "diff": d,
+        "subLabel": sub_map[d],
+        "questions": questions,
+    }
+
+
+def generate_timeblind(diff_key):
+    d = norm_diff(diff_key)
+    if d == "lowkey":
+        target_sec = round(random.uniform(3.6, 4.8), 1)
+        hide_after_sec = 1.2
+        tolerance_sec = 0.35
+        decoys = False
+        sub_label = f"Target {target_sec:.1f}s • ±{tolerance_sec:.2f}s"
+    elif d == "locked_in":
+        target_sec = round(random.uniform(4.4, 5.6), 1)
+        hide_after_sec = 1.0
+        tolerance_sec = 0.25
+        decoys = True
+        sub_label = f"Target {target_sec:.1f}s • ±{tolerance_sec:.2f}s • Pulse Decoy"
+    else:
+        target_sec = round(random.uniform(5.0, 6.4), 1)
+        hide_after_sec = 0.8
+        tolerance_sec = 0.19
+        decoys = True
+        sub_label = f"Target {target_sec:.1f}s • ±{tolerance_sec:.2f}s • Off-Beat Decoys"
+
+    return {
+        "game": "timeblind",
+        "diff": d,
+        "subLabel": sub_label,
+        "targetSec": target_sec,
+        "hideAfterSec": hide_after_sec,
+        "toleranceSec": tolerance_sec,
+        "decoys": decoys,
+    }
+
+
+def generate_ghosttrack(diff_key):
+    d = norm_diff(diff_key)
+    if d == "lowkey":
+        total_orbs, target_count, speed, max_mistakes = 6, 3, 1.45, 1
+        sub_label = "6 Orbs • Track 3"
+    elif d == "locked_in":
+        total_orbs, target_count, speed, max_mistakes = 7, 3, 2.05, 1
+        sub_label = "7 Orbs • Track 3 • Faster Drift"
+    else:
+        total_orbs, target_count, speed, max_mistakes = 9, 4, 2.65, 0
+        sub_label = "9 Orbs • Track 4 • Zero Misses"
+
+    orbs = []
+    for i in range(total_orbs):
+        angle = random.uniform(0, math.tau)
+        orbs.append({
+            "id": i,
+            "xNorm": random.uniform(0.16, 0.84),
+            "yNorm": random.uniform(0.2, 0.8),
+            "vx": math.cos(angle) * speed,
+            "vy": math.sin(angle) * speed,
+            "isTarget": i < target_count,
+        })
+
+    return {
+        "game": "ghosttrack",
+        "diff": d,
+        "subLabel": sub_label,
+        "orbs": orbs,
+        "targetCount": target_count,
+        "trackMs": 2500 if d == "lowkey" else (2750 if d == "locked_in" else 3000),
+        "maxMistakes": max_mistakes,
+    }
+
+
+def _rotate_pts(pts, deg):
+    steps = (deg // 90) % 4
+    cur = list(pts)
+    for _ in range(steps):
+        cur = [(-y, x) for (x, y) in cur]
+    min_x = min(p[0] for p in cur)
+    min_y = min(p[1] for p in cur)
+    return [(x - min_x, y - min_y) for (x, y) in cur]
+
+
+def _mirror_pts(pts):
+    mir = [(-x, y) for (x, y) in pts]
+    min_x = min(p[0] for p in mir)
+    min_y = min(p[1] for p in mir)
+    return [(x - min_x, y - min_y) for (x, y) in mir]
+
+
+def generate_mirrortrap(diff_key):
+    d = norm_diff(diff_key)
+    shape_pool = ["L-Tetromino", "Z-Shape"] if d == "lowkey" else (
+        ["Hook-5", "Step-5", "Z-Shape"] if d == "locked_in" else
+        ["Cross-6", "Key-6", "Hook-5", "Step-5"]
+    )
+    name = random.choice(shape_pool)
+    base = BASE_SHAPES[name]
+
+    angles = [90, 180, 270] if d == "lowkey" else [45, 90, 135, 225, 270]
+    true_angle = random.choice(angles)
+    is_mirrored = random.choice([True, False])
+
+    candidate_pts = _rotate_pts(base, true_angle)
+    if is_mirrored:
+        candidate_pts = _mirror_pts(candidate_pts)
+
+    sub_map = {
+        "lowkey": f"{name} • 90°/180°/270°",
+        "locked_in": f"{name} • {true_angle}° Diagonal Check",
+        "cooked": f"{name} • {true_angle}° High-Density Check",
+    }
+    return {
+        "game": "mirrortrap",
+        "diff": d,
+        "subLabel": sub_map[d],
+        "shapeName": name,
+        "angleDeg": true_angle,
+        "baseCoords": base,
+        "candidateCoords": candidate_pts,
+        "isMirrored": is_mirrored,
+    }
+
+
+def generate_herdtrap(diff_key):
+    d = norm_diff(diff_key)
+    dirs = ["UP", "DOWN", "LEFT", "RIGHT"]
+    majority_dir = random.choice(dirs)
+    minority_dir = random.choice([x for x in dirs if x != majority_dir])
+
+    total_count = 9 if d == "lowkey" else (11 if d == "locked_in" else 13)
+    maj_count = (total_count // 2) + 2
+    inverted = (d == "cooked") and (random.random() < 0.45)
+
+    opposite_map = {"UP": "DOWN", "DOWN": "UP", "LEFT": "RIGHT", "RIGHT": "LEFT"}
+    correct_dir = opposite_map[majority_dir] if inverted else majority_dir
+
+    arrows = [majority_dir] * maj_count + [minority_dir] * (total_count - maj_count)
+    sub_map = {
+        "lowkey": "Follow Majority Swarm",
+        "locked_in": "Dense Swarm • Follow Majority",
+        "cooked": "RED = INVERT • GREEN = FOLLOW",
+    }
+    return {
+        "game": "herdtrap",
+        "diff": d,
+        "subLabel": sub_map[d],
+        "arrows": _shuffle(arrows),
+        "majorityDir": majority_dir,
+        "inverted": inverted,
+        "correctDir": correct_dir,
+        "options": dirs,
+    }
+
+
+GENERATORS = {
+    "schulte": generate_schulte,
+    "stroop": generate_stroop,
+    "grid": generate_grid,
+    "reflex": generate_reflex,
+    "logic": generate_logic,
+    "mathblitz": generate_mathblitz,
+    "timeblind": generate_timeblind,
+    "ghosttrack": generate_ghosttrack,
+    "mirrortrap": generate_mirrortrap,
+    "herdtrap": generate_herdtrap,
+}
+
+
+def generate_round(game_key, diff_key="lowkey"):
+    key = game_key if game_key in GENERATORS else "schulte"
+    return GENERATORS[key](diff_key)
+
+
+def pick_next_feed_game(recent_games):
+    recent = list(recent_games or [])
+    if not recent:
+        return random.choice(GAME_KEYS)
+    last = recent[-1]
+    candidates = [g for g in GAME_KEYS if g != last]
+    if len(recent) >= 2:
+        prev = recent[-2]
+        filtered = [g for g in candidates if g != prev]
+        if filtered:
+            candidates = filtered
+    return random.choice(candidates)
+
+
+def evaluate_round(won, reaction_ms, streak, chaos_mode, diff_key="lowkey"):
+    d_meta = get_diff_meta(diff_key)
+    mult = d_meta["multiplier"] * (1.25 if chaos_mode else 1.0)
+    if not won:
+        return {
+            "pointsEarned": 0,
+            "nextStreak": 0,
+            "shieldGained": False,
+            "multiplier": round(mult, 2),
+        }
+
+    safe_ms = max(120.0, float(reaction_ms or 1200.0))
+    speed_bonus = int(max(0.0, (4500.0 - min(safe_ms, 4500.0)) / 45.0))
+    streak_bonus = min(streak * 12, 120)
+    raw_pts = (100 + speed_bonus + streak_bonus) * mult
+    points = int(round(raw_pts))
+    next_streak = streak + 1
+    shield_gained = (next_streak > 0 and next_streak % 5 == 0)
+
+    return {
+        "pointsEarned": points,
+        "nextStreak": next_streak,
+        "shieldGained": shield_gained,
+        "multiplier": round(mult, 2),
+    }
+
+
+def _game_performance_score(game_key, stats):
+    attempts = int(stats.get("attempts", 0))
+    if attempts <= 0:
+        return None
+    wins = int(stats.get("wins", 0))
+    acc = wins / attempts
+    avg_ms = float(stats.get("avgMs", PAR_MS.get(game_key, 3500.0)))
+    par = PAR_MS.get(game_key, 3500.0)
+
+    speed_ratio = max(0.35, min(1.35, par / max(150.0, avg_ms)))
+    speed_component = speed_ratio * 35.0 if wins > 0 else 0.0
+    acc_component = acc * 65.0
+    raw = acc_component + speed_component
+    return int(round(max(5.0, min(99.0, raw))))
+
+
+def compute_brain_profile(game_stats_map, recent_history):
+    history = list(recent_history or [])
+    total_rounds = len(history)
+    total_wins = sum(1 for h in history if h.get("won"))
+    win_rate = int(round((total_wins / total_rounds) * 100)) if total_rounds > 0 else None
+
+    per_game = {}
+    tested_scores = []
+    for g in GAME_KEYS:
+        st = (game_stats_map or {}).get(g, {})
+        score = _game_performance_score(g, st)
+        per_game[g] = {
+            "score": score,
+            "attempts": int(st.get("attempts", 0)),
+            "wins": int(st.get("wins", 0)),
+            "avgMs": int(round(st.get("avgMs", 0))) if st.get("attempts", 0) > 0 else None,
+        }
+        if score is not None:
+            tested_scores.append(score)
+
+    if total_rounds == 0 or not tested_scores:
+        return {
+            "brainIndex": None,
+            "rankLabel": "Unranked — Play Any Drill",
+            "trend": "STEADY —",
+            "winRate": None,
+            "testedCount": 0,
+            "perGame": per_game,
+            "strongest": None,
+            "weakest": None,
+            "insight": "Play rounds in the Feed, Solo Arena, or 60s Sprint—your Brain Index dynamically rises when you win fast and drops when you miss.",
+        }
+
+    recent_slice = history[-25:]
+    weighted_sum = 0.0
+    weight_total = 0.0
+    for idx, item in enumerate(recent_slice):
+        w = idx + 1.0
+        g_key = item.get("game", "logic")
+        par = PAR_MS.get(g_key, 3500.0)
+        ms = max(140.0, float(item.get("ms") or par))
+        if item.get("won"):
+            speed_factor = max(0.75, min(1.25, par / ms))
+            round_val = min(100.0, 76.0 * speed_factor + 14.0)
+        else:
+            round_val = 22.0
+        weighted_sum += round_val * w
+        weight_total += w
+
+    recent_avg = weighted_sum / max(1.0, weight_total)
+    domain_avg = sum(tested_scores) / len(tested_scores)
+    brain_index = int(round(max(5.0, min(99.0, 0.65 * recent_avg + 0.35 * domain_avg))))
+
+    trend = "STEADY —"
+    if len(history) >= 4:
+        prev_slice = history[-min(10, len(history)):-min(5, len(history))]
+        curr_slice = history[-min(5, len(history)):]
+        if prev_slice and curr_slice:
+            prev_wr = sum(1 for x in prev_slice if x.get("won")) / len(prev_slice)
+            curr_wr = sum(1 for x in curr_slice if x.get("won")) / len(curr_slice)
+            diff_wr = curr_wr - prev_wr
+            if diff_wr >= 0.18:
+                trend = "IMPROVING ▲"
+            elif diff_wr <= -0.18:
+                trend = "SLIPPING ▼"
+
+    if brain_index >= 88:
+        rank = "Apex Focus Architect"
+    elif brain_index >= 75:
+        rank = "High-Bandwidth Operator"
+    elif brain_index >= 58:
+        rank = "De-Rotting Contender"
+    elif brain_index >= 40:
+        rank = "Warming Up Signal"
+    else:
+        rank = "Algorithm Recovery Mode"
+
+    tested_keys = [g for g in GAME_KEYS if per_game[g]["score"] is not None]
+    strongest_key = max(tested_keys, key=lambda k: per_game[k]["score"])
+    weakest_key = min(tested_keys, key=lambda k: per_game[k]["score"])
+
+    if strongest_key == weakest_key:
+        insight = f"You've tested {GAME_LABELS[strongest_key]} ({per_game[strongest_key]['score']}/100). Try more drills to balance your profile."
+    else:
+        insight = (
+            f"Peak domain: {GAME_LABELS[strongest_key]} ({per_game[strongest_key]['score']}). "
+            f"Biggest growth lever: {GAME_LABELS[weakest_key]} ({per_game[weakest_key]['score']})."
+        )
+
+    return {
+        "brainIndex": brain_index,
+        "rankLabel": rank,
+        "trend": trend,
+        "winRate": win_rate,
+        "testedCount": len(tested_keys),
+        "perGame": per_game,
+        "strongest": GAME_LABELS[strongest_key],
+        "weakest": GAME_LABELS[weakest_key],
+        "insight": insight,
+    }
+
+
+def update_leaderboard(entries, new_entry):
+    board = list(entries or [])
+    if new_entry and int(new_entry.get("score", 0)) > 0:
+        board.append({
+            "name": (new_entry.get("name") or "ANON").strip()[:16] or "ANON",
+            "mode": str(new_entry.get("mode") or "Feed"),
+            "streak": int(new_entry.get("streak") or 0),
+            "score": int(new_entry.get("score") or 0),
+        })
+    board.sort(key=lambda item: int(item.get("score", 0)), reverse=True)
+    return board[:10]
+
+
+def get_coach_line(coach_style, won, used_shield=False):
+    style = "chill" if coach_style == "chill" else "roast"
+    bucket = COACH_QUOTES[style]
+    if used_shield:
+        return random.choice(bucket["shield"])
+    return random.choice(bucket["win"] if won else bucket["lose"])
+
+
+def build_session_csv(state_obj):
+    out = io.StringIO()
+    writer = csv.writer(out)
+    writer.writerow(["game_key", "game_name", "attempts", "wins", "accuracy_pct", "avg_reaction_ms", "pr_score", "pr_best_ms"])
+    g_stats = state_obj.get("gameStats", {})
+    prs = state_obj.get("personalRecords", {})
+    for g in GAME_KEYS:
+        st = g_stats.get(g, {})
+        att = int(st.get("attempts", 0))
+        wins = int(st.get("wins", 0))
+        acc = round((wins / att) * 100, 1) if att > 0 else 0.0
+        avg_ms = round(float(st.get("avgMs", 0.0)), 1) if att > 0 else 0.0
+        pr = prs.get(g, {})
+        pr_score = int(pr.get("bestScore", 0))
+        pr_ms = pr.get("bestMs", "")
+        writer.writerow([g, GAME_LABELS[g], att, wins, acc, avg_ms, pr_score, pr_ms])
+    return out.getvalue()
+
+
+def py_generate_round(game_key, diff_key="lowkey"):
+    return json.dumps(generate_round(game_key, diff_key))
+
+
+def py_pick_next_feed_game(recent_json):
+    return pick_next_feed_game(json.loads(recent_json or "[]"))
+
+
+def py_evaluate_round(won, reaction_ms, streak, chaos_mode, diff_key="lowkey"):
+    return json.dumps(evaluate_round(bool(won), reaction_ms, int(streak), bool(chaos_mode), diff_key))
+
+
+def py_compute_brain_profile(game_stats_json, history_json):
+    return json.dumps(compute_brain_profile(json.loads(game_stats_json or "{}"), json.loads(history_json or "[]")))
+
+
+def py_update_leaderboard(board_json, new_entry_json):
+    return json.dumps(update_leaderboard(json.loads(board_json or "[]"), json.loads(new_entry_json or "null")))
+
+
+def py_get_coach_line(coach_style, won, used_shield=False):
+    return get_coach_line(coach_style, bool(won), bool(used_shield))
+
+
+def py_build_session_csv(state_json):
+    return build_session_csv(json.loads(state_json or "{}"))
+  </script>
+
+  <!-- ==================== FRONTEND BRIDGE & GAME RENDERERS ==================== -->
+  <script>
+    const STORAGE_KEY = "unrot_state_v3_python";
+    const GAME_ORDER = [
+      "schulte", "stroop", "grid", "reflex", "logic",
+      "mathblitz", "timeblind", "ghosttrack", "mirrortrap", "herdtrap"
+    ];
+
+    const GAME_META = {
+      schulte: { title: "Schulte Table", desc: "Scan sequentially across 4×4, Reverse 16→1, or 4×5 grids under pressure." },
+      stroop: { title: "Stroop Trap", desc: "Ignore word meaning; match ink color or obey INVERT rules." },
+      grid: { title: "Flash Grid", desc: "Memorize flashed tiles and click them back accurately." },
+      reflex: { title: "Reflex Snap", desc: "Snap as soon as the signal turns green—avoid crimson fakeouts." },
+      logic: { title: "Logic Blitz", desc: "Spot the hidden rule and pick the next number in the sequence." },
+      mathblitz: { title: "Math Blitz", desc: "Solve rapid arithmetic and missing-value chains cleanly." },
+      timeblind: { title: "Time Blind", desc: "Count internally after the clock hides and stop on target." },
+      ghosttrack: { title: "Ghost Track", desc: "Track marked orbs through motion and select them when stopped." },
+      mirrortrap: { title: "Mirror Trap", desc: "Decide if the rotated shape is a true rotation or a mirror flip." },
+      herdtrap: { title: "Herd Trap", desc: "Follow the majority crowd arrow—unless a red wave inverts the rule." }
+    };
+
+    const DIFF_FALLBACK = {
+      lowkey: { key: "lowkey", label: "Lowkey", multiplier: 1.0, feedSeconds: 15.0, hudLabel: "LOWKEY (1.0×)" },
+      locked_in: { key: "locked_in", label: "Locked In", multiplier: 1.25, feedSeconds: 13.5, hudLabel: "LOCKED IN (1.25×)" },
+      cooked: { key: "cooked", label: "Cooked", multiplier: 1.5, feedSeconds: 12.0, hudLabel: "COOKED (1.5×)" }
+    };
+
+    const DEFAULT_LEADERBOARD = [
+      { name: "SORA", mode: "60s Sprint", streak: 14, score: 2480 },
+      { name: "KAI", mode: "Feed", streak: 11, score: 1920 },
+      { name: "NOVA", mode: "60s Sprint", streak: 9, score: 1540 },
+      { name: "VEX", mode: "Feed", streak: 7, score: 1180 },
+      { name: "JULES", mode: "Solo", streak: 5, score: 760 }
+    ];
+
+    let pyodideReady = false;
+    let pyBridge = {};
+
+    function defaultGameStats() {
+      const obj = {};
+      for (const g of GAME_ORDER) {
+        obj[g] = { attempts: 0, wins: 0, avgMs: 0 };
+      }
+      return obj;
+    }
+
+    function defaultPersonalRecords() {
+      const obj = {};
+      for (const g of GAME_ORDER) {
+        obj[g] = { bestScore: 0, bestMs: null };
+      }
+      return obj;
+    }
+
+    function createDefaultState() {
+      return {
+        theme: "neon",
+        coach: "roast",
+        chaosMode: false,
+        feedDiff: "lowkey",
+        soloDiff: "lowkey",
+        score: 0,
+        streak: 0,
+        bestScore: 0,
+        bestStreak: 0,
+        shields: 0,
+        totalRounds: 0,
+        totalWins: 0,
+        speedSamplesMs: [],
+        recentGames: [],
+        roundHistory: [],
+        gameStats: defaultGameStats(),
+        personalRecords: defaultPersonalRecords(),
+        leaderboard: DEFAULT_LEADERBOARD.slice(),
+        callsign: "YOU"
+      };
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return createDefaultState();
+        const parsed = JSON.parse(raw);
+        const base = createDefaultState();
+        const mergedStats = defaultGameStats();
+        for (const g of GAME_ORDER) {
+          if (parsed.gameStats && parsed.gameStats[g]) {
+            mergedStats[g] = {
+              attempts: Number(parsed.gameStats[g].attempts) || 0,
+              wins: Number(parsed.gameStats[g].wins) || 0,
+              avgMs: Number(parsed.gameStats[g].avgMs) || 0
+            };
+          }
+        }
+        const mergedPR = defaultPersonalRecords();
+        for (const g of GAME_ORDER) {
+          if (parsed.personalRecords && parsed.personalRecords[g]) {
+            mergedPR[g] = {
+              bestScore: Number(parsed.personalRecords[g].bestScore) || 0,
+              bestMs: parsed.personalRecords[g].bestMs !== null && parsed.personalRecords[g].bestMs !== undefined
+                ? Number(parsed.personalRecords[g].bestMs)
+                : null
+            };
+          }
+        }
+        return {
+          ...base,
+          ...parsed,
+          feedDiff: ["lowkey", "locked_in", "cooked"].includes(parsed.feedDiff) ? parsed.feedDiff : "lowkey",
+          soloDiff: ["lowkey", "locked_in", "cooked"].includes(parsed.soloDiff) ? parsed.soloDiff : "lowkey",
+          gameStats: mergedStats,
+          personalRecords: mergedPR,
+          roundHistory: Array.isArray(parsed.roundHistory) ? parsed.roundHistory.slice(-80) : [],
+          leaderboard: Array.isArray(parsed.leaderboard) && parsed.leaderboard.length ? parsed.leaderboard : DEFAULT_LEADERBOARD.slice()
+        };
+      } catch (err) {
+        console.warn("Failed to parse saved state, resetting:", err);
+        return createDefaultState();
+      }
+    }
+
+    let state = loadState();
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (err) {
+        console.warn("Could not save state:", err);
+      }
+    }
+
+    async function initPythonEngine() {
+      const badge = document.getElementById("pyEngineStatusBadge");
+      try {
+        if (typeof loadPyodide !== "function") {
+          throw new Error("Pyodide script not available");
+        }
+        const pyodide = await loadPyodide({
+          indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/"
+        });
+        const pyCode = document.getElementById("unrot-python-engine").textContent;
+        await pyodide.runPythonAsync(pyCode);
+
+        pyBridge = {
+          generateRound: pyodide.globals.get("py_generate_round"),
+          pickNextFeedGame: pyodide.globals.get("py_pick_next_feed_game"),
+          evaluateRound: pyodide.globals.get("py_evaluate_round"),
+          computeBrainProfile: pyodide.globals.get("py_compute_brain_profile"),
+          updateLeaderboard: pyodide.globals.get("py_update_leaderboard"),
+          getCoachLine: pyodide.globals.get("py_get_coach_line"),
+          buildSessionCsv: pyodide.globals.get("py_build_session_csv")
+        };
+        pyodideReady = true;
+
+        if (badge) {
+          badge.className = "hidden sm:inline-flex items-center gap-1.5 text-xs font-mono-code px-3 py-1 rounded-full bg-emerald-400/15 border border-emerald-300/30 text-emerald-200";
+          badge.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-emerald-300"></span>PYTHON 3 ENGINE READY`;
+        }
+        renderBrainProfile();
+      } catch (err) {
+        console.warn("Pyodide fallback active:", err);
+        pyodideReady = false;
+        if (badge) {
+          badge.className = "hidden sm:inline-flex items-center gap-1.5 text-xs font-mono-code px-3 py-1 rounded-full bg-zinc-500/15 border border-white/15 text-zinc-300";
+          badge.textContent = "LOCAL ENGINE READY";
+        }
+      }
+    }
+
+    function pyGenerateRound(gameKey, diffKey = "lowkey") {
+      if (pyodideReady && pyBridge.generateRound) {
+        return JSON.parse(pyBridge.generateRound(gameKey, diffKey));
+      }
+      return { game: gameKey, diff: diffKey, subLabel: DIFF_FALLBACK[diffKey]?.label || "Lowkey" };
+    }
+
+    function pyPickNextFeedGame(recentGames) {
+      if (pyodideReady && pyBridge.pickNextFeedGame) {
+        return String(pyBridge.pickNextFeedGame(JSON.stringify(recentGames)));
+      }
+      const choices = GAME_ORDER.filter(g => g !== recentGames[recentGames.length - 1]);
+      return choices[Math.floor(Math.random() * choices.length)] || "schulte";
+    }
+
+    function pyEvaluateRound(won, reactionMs, streak, chaosMode, diffKey = "lowkey") {
+      if (pyodideReady && pyBridge.evaluateRound) {
+        return JSON.parse(pyBridge.evaluateRound(won, reactionMs, streak, chaosMode, diffKey));
+      }
+      const mult = (DIFF_FALLBACK[diffKey]?.multiplier || 1.0) * (chaosMode ? 1.25 : 1.0);
+      if (!won) return { pointsEarned: 0, nextStreak: 0, shieldGained: false, multiplier: mult };
+      const pts = Math.round((120 + Math.min(streak * 12, 120)) * mult);
+      const nextStreak = streak + 1;
+      return { pointsEarned: pts, nextStreak, shieldGained: nextStreak % 5 === 0, multiplier: mult };
+    }
+
+    function pyComputeBrainProfile() {
+      if (pyodideReady && pyBridge.computeBrainProfile) {
+        return JSON.parse(pyBridge.computeBrainProfile(JSON.stringify(state.gameStats), JSON.stringify(state.roundHistory)));
+      }
+      const perGame = {};
+      let tested = 0;
+      let sum = 0;
+      for (const g of GAME_ORDER) {
+        const st = state.gameStats[g] || { attempts: 0, wins: 0, avgMs: 0 };
+        if (st.attempts > 0) {
+          const sc = Math.max(5, Math.min(99, Math.round((st.wins / st.attempts) * 100)));
+          perGame[g] = { score: sc, attempts: st.attempts, wins: st.wins, avgMs: Math.round(st.avgMs || 0) };
+          tested += 1;
+          sum += sc;
+        } else {
+          perGame[g] = { score: null, attempts: 0, wins: 0, avgMs: null };
+        }
+      }
+      return {
+        brainIndex: tested > 0 ? Math.round(sum / tested) : null,
+        rankLabel: tested > 0 ? "Active Player" : "Unranked — Play Any Drill",
+        trend: "STEADY —",
+        winRate: state.totalRounds > 0 ? Math.round((state.totalWins / state.totalRounds) * 100) : null,
+        testedCount: tested,
+        perGame,
+        strongest: null,
+        weakest: null,
+        insight: "Keep playing rounds to refine your cognitive telemetry."
+      };
+    }
+
+    function pyUpdateLeaderboard(board, newEntry) {
+      if (pyodideReady && pyBridge.updateLeaderboard) {
+        return JSON.parse(pyBridge.updateLeaderboard(JSON.stringify(board), JSON.stringify(newEntry)));
+      }
+      const next = board.slice();
+      if (newEntry && newEntry.score > 0) next.push(newEntry);
+      next.sort((a, b) => b.score - a.score);
+      return next.slice(0, 10);
+    }
+
+    function pyGetCoachLine(coachStyle, won, usedShield = false) {
+      if (pyodideReady && pyBridge.getCoachLine) {
+        return String(pyBridge.getCoachLine(coachStyle, won, usedShield));
+      }
+      if (usedShield) return "Focus Shield absorbed the hit.";
+      return won ? "Clean execution. Keep rolling." : "Missed that one—reset and lock in.";
+    }
+
+    function pyBuildSessionCsv() {
+      if (pyodideReady && pyBridge.buildSessionCsv) {
+        return String(pyBridge.buildSessionCsv(JSON.stringify(state)));
+      }
+      return "game_key,attempts,wins\n";
+    }
+
+    function getFeedDurationMs() {
+      const cfg = DIFF_FALLBACK[state.feedDiff] || DIFF_FALLBACK.lowkey;
+      return Math.round(cfg.feedSeconds * 1000);
+    }
+
+    function formatPRText(gameKey) {
+      const pr = state.personalRecords[gameKey];
+      if (!pr || pr.bestScore <= 0) return "—";
+      if (pr.bestMs !== null && pr.bestMs !== undefined) {
+        if (gameKey === "timeblind") {
+          return `${pr.bestScore} PTS • ±${(pr.bestMs / 1000).toFixed(2)}s`;
+        }
+        return `${pr.bestScore} PTS • ${Math.round(pr.bestMs)}ms`;
+      }
+      return `${pr.bestScore} PTS`;
+    }
+
+    function renderAllPRBadges() {
+      for (const g of GAME_ORDER) {
+        const badge = document.getElementById(`pr-badge-${g}`);
+        if (badge) badge.textContent = formatPRText(g);
+      }
+      const soloPr = document.getElementById("soloPrDisplay");
+      if (soloPr && activeSoloGame) {
+        soloPr.textContent = `PR: ${formatPRText(activeSoloGame)}`;
+      }
+    }
+
+    function updatePersonalRecord(gameKey, won, pointsEarned, reactionMs) {
+      if (!won || pointsEarned <= 0) return false;
+      const cur = state.personalRecords[gameKey] || { bestScore: 0, bestMs: null };
+      const numericMs = typeof reactionMs === "number" && !Number.isNaN(reactionMs) ? Math.max(20, Math.round(reactionMs)) : null;
+
+      let isNewPR = false;
+      if (pointsEarned > cur.bestScore) {
+        cur.bestScore = pointsEarned;
+        if (numericMs !== null) cur.bestMs = numericMs;
+        isNewPR = true;
+      } else if (pointsEarned === cur.bestScore && numericMs !== null) {
+        if (cur.bestMs === null || numericMs < cur.bestMs) {
+          cur.bestMs = numericMs;
+          isNewPR = true;
+        }
+      }
+
+      state.personalRecords[gameKey] = cur;
+      renderAllPRBadges();
+      return isNewPR;
+    }
+
+    function flashOutcomeOnStage(context, won) {
+      const mount = context === "feed"
+        ? document.getElementById("feedCardMount")
+        : context === "solo"
+          ? document.getElementById("soloCardMount")
+          : document.getElementById("sprintCardMount");
+      const shell = mount ? mount.closest(".glass-panel") : null;
+      if (!shell) return;
+      shell.classList.remove("card-result-win", "card-result-lose");
+      void shell.offsetWidth;
+      shell.classList.add(won ? "card-result-win" : "card-result-lose");
+    }
+
+    function showNewPRToast(gameKey, pointsEarned, context) {
+      const label = GAME_META[gameKey]?.title || gameKey;
+      setStatus(`🏆 NEW PERSONAL RECORD on ${label}! +${pointsEarned} PTS`);
+      if (context === "solo") {
+        const soloPr = document.getElementById("soloPrDisplay");
+        if (soloPr) {
+          soloPr.classList.add("pop-in");
+          setTimeout(() => soloPr.classList.remove("pop-in"), 350);
+        }
+      }
+    }
+
+    let activeCleanup = null;
+    let feedLoopActive = false;
+    let feedRoundNum = 1;
+    let feedTimerRaf = null;
+    let feedRoundStartPerf = 0;
+    let feedRoundDurationMs = 15000;
+    let feedAdvanceTimeout = null;
+    let feedCountdownInterval = null;
+    let currentFeedGame = "schulte";
+
+    let activeSoloGame = null;
+    let soloAdvanceTimeout = null;
+
+    let sprintActive = false;
+    let sprintRemainingMs = 60000;
+    let sprintLastTickPerf = 0;
+    let sprintRaf = null;
+    let sprintCleared = 0;
+    let sprintScore = 0;
+    let sprintAdvanceTimeout = null;
+
+    function runCleanup() {
+      if (typeof activeCleanup === "function") {
+        try { activeCleanup(); } catch (_) {}
+      }
+      activeCleanup = null;
+      clearTimeout(feedAdvanceTimeout);
+      clearTimeout(soloAdvanceTimeout);
+      clearTimeout(sprintAdvanceTimeout);
+      clearInterval(feedCountdownInterval);
+      if (feedTimerRaf) cancelAnimationFrame(feedTimerRaf);
+      feedTimerRaf = null;
+    }
+
+    function setStatus(msg) {
+      const el = document.getElementById("hudStatusText");
+      if (el) el.textContent = msg;
+    }
+
+    function syncHUD() {
+      const dCfg = DIFF_FALLBACK[state.feedDiff] || DIFF_FALLBACK.lowkey;
+      document.getElementById("hudScore").textContent = state.score.toLocaleString();
+      document.getElementById("hudStreak").textContent = state.streak;
+      document.getElementById("hudBest").textContent = state.bestScore.toLocaleString();
+      document.getElementById("hudTier").textContent = dCfg.hudLabel;
+      document.getElementById("hudShields").textContent = state.shields;
+
+      const chaosBtn = document.getElementById("chaosToggleBtn");
+      if (state.chaosMode) {
+        chaosBtn.textContent = "Chaos: ON";
+        chaosBtn.className = "px-3 py-1.5 rounded-full text-[11px] font-mono-code uppercase tracking-wider border border-[var(--accent-tertiary)] bg-[var(--accent-tertiary)]/20 text-white font-bold transition cursor-pointer";
+      } else {
+        chaosBtn.textContent = "Chaos: OFF";
+        chaosBtn.className = "px-3 py-1.5 rounded-full text-[11px] font-mono-code uppercase tracking-wider border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 transition cursor-pointer";
+      }
+
+      const acc = state.totalRounds > 0 ? Math.round((state.totalWins / state.totalRounds) * 100) : 100;
+      document.getElementById("feedAccuracyStat").textContent = `${acc}%`;
+
+      if (state.speedSamplesMs.length > 0) {
+        const avg = Math.round(state.speedSamplesMs.reduce((a, b) => a + b, 0) / state.speedSamplesMs.length);
+        document.getElementById("feedAvgSpeedStat").textContent = `${(avg / 1000).toFixed(2)}s`;
+      } else {
+        document.getElementById("feedAvgSpeedStat").textContent = "—";
+      }
+
+      document.getElementById("feedShieldProgress").textContent = `${state.streak % 5} / 5`;
+      document.getElementById("feedRoundCounter").textContent = `REEL #${feedRoundNum}`;
+
+      if (!feedLoopActive) {
+        document.getElementById("feedClockReadout").textContent = `${dCfg.feedSeconds.toFixed(1)}s`;
+      }
+    }
+
+    function positionPill(pillId, selector, attr, activeValue, instant = false) {
+      const pill = document.getElementById(pillId);
+      const buttons = Array.from(document.querySelectorAll(selector));
+      const activeBtn = buttons.find(b => b.getAttribute(attr) === String(activeValue));
+      if (!pill || !activeBtn || activeBtn.offsetParent === null) {
+        if (pill) pill.style.opacity = "0";
+        return;
+      }
+      const parent = pill.parentElement;
+      if (!parent) return;
+
+      let x, y, w, h;
+      if (activeBtn.offsetParent === parent) {
+        x = activeBtn.offsetLeft;
+        y = activeBtn.offsetTop;
+        w = activeBtn.offsetWidth;
+        h = activeBtn.offsetHeight;
+      } else {
+        const pRect = parent.getBoundingClientRect();
+        const bRect = activeBtn.getBoundingClientRect();
+        const scaleX = parent.offsetWidth ? pRect.width / parent.offsetWidth : 1;
+        const scaleY = parent.offsetHeight ? pRect.height / parent.offsetHeight : 1;
+        x = (bRect.left - pRect.left) / scaleX - parent.clientLeft;
+        y = (bRect.top - pRect.top) / scaleY - parent.clientTop;
+        w = bRect.width / scaleX;
+        h = bRect.height / scaleY;
+      }
+      if (w <= 0 || h <= 0) return;
+
+      if (instant) {
+        const prevTrans = pill.style.transition;
+        pill.style.transition = "none";
+        pill.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        pill.style.width = `${w}px`;
+        pill.style.height = `${h}px`;
+        pill.style.opacity = "1";
+        void pill.offsetWidth;
+        pill.style.transition = prevTrans;
+      } else {
+        pill.style.opacity = "1";
+        pill.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        pill.style.width = `${w}px`;
+        pill.style.height = `${h}px`;
+      }
+    }
+
+    function syncAllLiquidPills(instant = false) {
+      document.querySelectorAll(".theme-pill").forEach(b => {
+        b.classList.toggle("active-pill", b.getAttribute("data-theme-val") === state.theme);
+      });
+      document.querySelectorAll(".coach-pill").forEach(b => {
+        b.classList.toggle("active-pill", b.getAttribute("data-coach-val") === state.coach);
+      });
+      document.querySelectorAll(".feed-diff-btn").forEach(b => {
+        b.classList.toggle("active-pill", b.getAttribute("data-feed-diff") === state.feedDiff);
+      });
+      document.querySelectorAll(".solo-diff-btn").forEach(b => {
+        b.classList.toggle("active-pill", b.getAttribute("data-solo-diff") === state.soloDiff);
+      });
+
+      const activeNav = document.querySelector(".nav-tab.active-pill");
+      const currentTab = activeNav ? activeNav.getAttribute("data-tab") : "feed";
+
+      positionPill("navSlidingPill", ".nav-tab", "data-tab", currentTab, instant);
+      positionPill("themeSlidingPill", ".theme-pill", "data-theme-val", state.theme, instant);
+      positionPill("coachSlidingPill", ".coach-pill", "data-coach-val", state.coach, instant);
+      positionPill("feedDiffSlidingPill", ".feed-diff-btn", "data-feed-diff", state.feedDiff, instant);
+      positionPill("soloDiffSlidingPill", ".solo-diff-btn", "data-solo-diff", state.soloDiff, instant);
+    }
+
+    function applyTheme(themeName, animate = true) {
+      const valid = ["bw", "neon", "pastel"].includes(themeName) ? themeName : "neon";
+      state.theme = valid;
+      document.body.setAttribute("data-theme", valid);
+      saveState();
+
+      if (animate) {
+        const track = document.getElementById("themeTrack");
+        track.classList.remove("mode-switch-pulse");
+        void track.offsetWidth;
+        track.classList.add("mode-switch-pulse");
+      }
+      syncAllLiquidPills(false);
+    }
+
+    function applyCoach(coachName, animate = true) {
+      const valid = ["roast", "chill"].includes(coachName) ? coachName : "roast";
+      state.coach = valid;
+      saveState();
+
+      if (animate) {
+        const track = document.getElementById("coachTrack");
+        track.classList.remove("mode-switch-pulse");
+        void track.offsetWidth;
+        track.classList.add("mode-switch-pulse");
+      }
+      syncAllLiquidPills(false);
+      setStatus(`Coach switched to ${valid.toUpperCase()} mode.`);
+    }
+
+    function applyFeedDiff(diffKey, animate = true) {
+      const valid = ["lowkey", "locked_in", "cooked"].includes(diffKey) ? diffKey : "lowkey";
+      state.feedDiff = valid;
+      saveState();
+      syncHUD();
+
+      if (animate) {
+        const track = document.getElementById("feedDiffTrack");
+        track.classList.remove("mode-switch-pulse");
+        void track.offsetWidth;
+        track.classList.add("mode-switch-pulse");
+      }
+      syncAllLiquidPills(false);
+
+      const viewFeed = document.getElementById("view-feed");
+      if (viewFeed && !viewFeed.classList.contains("hidden") && feedLoopActive) {
+        loadFeedReel(currentFeedGame);
+      }
+      setStatus(`Feed vibe set to ${DIFF_FALLBACK[valid].label.toUpperCase()} (${DIFF_FALLBACK[valid].feedSeconds.toFixed(1)}s).`);
+    }
+
+    function applySoloDiff(diffKey, animate = true) {
+      const valid = ["lowkey", "locked_in", "cooked"].includes(diffKey) ? diffKey : "lowkey";
+      state.soloDiff = valid;
+      saveState();
+
+      if (animate) {
+        const track = document.getElementById("soloDiffTrack");
+        track.classList.remove("mode-switch-pulse");
+        void track.offsetWidth;
+        track.classList.add("mode-switch-pulse");
+      }
+      syncAllLiquidPills(false);
+
+      if (activeSoloGame) {
+        launchSoloGame(activeSoloGame);
+      }
+      setStatus(`Solo vibe set to ${DIFF_FALLBACK[valid].label.toUpperCase()}.`);
+    }
+
+    function switchTab(tabName) {
+      runCleanup();
+      if (tabName !== "sprint" && sprintActive) {
+        stopSprint(false);
+      }
+      if (tabName !== "feed") {
+        feedLoopActive = false;
+      }
+
+      document.querySelectorAll(".app-view").forEach(sec => {
+        sec.classList.add("hidden");
+        sec.classList.remove("view-animate");
+      });
+
+      const target = document.getElementById(`view-${tabName}`);
+      if (target) {
+        target.classList.remove("hidden");
+        void target.offsetWidth;
+        target.classList.add("view-animate");
+      }
+
+      document.querySelectorAll(".nav-tab").forEach(btn => {
+        btn.classList.toggle("active-pill", btn.getAttribute("data-tab") === tabName);
+      });
+
+      requestAnimationFrame(() => syncAllLiquidPills(true));
+
+      if (tabName === "feed") {
+        const veil = document.getElementById("feedVeil");
+        if (!feedLoopActive) {
+          veil.classList.remove("feed-veil-hidden");
+        }
+      } else if (tabName === "games") {
+        renderAllPRBadges();
+      } else if (tabName === "profile") {
+        renderBrainProfile();
+      } else if (tabName === "leaderboard") {
+        renderLeaderboard();
+      }
+    }
+
+    function recordRoundOutcome({ gameKey, won, reactionMs, context, diffKey = "lowkey" }) {
+      const st = state.gameStats[gameKey] || { attempts: 0, wins: 0, avgMs: 0 };
+      const prevAttempts = st.attempts;
+      const cleanMs = typeof reactionMs === "number" && !Number.isNaN(reactionMs) ? Math.max(80, reactionMs) : 1500;
+      st.attempts += 1;
+      if (won) st.wins += 1;
+      st.avgMs = prevAttempts === 0
+        ? cleanMs
+        : ((st.avgMs * prevAttempts) + cleanMs) / st.attempts;
+      state.gameStats[gameKey] = st;
+
+      state.totalRounds += 1;
+      if (won) state.totalWins += 1;
+      state.speedSamplesMs.push(cleanMs);
+      if (state.speedSamplesMs.length > 60) state.speedSamplesMs.shift();
+
+      state.roundHistory.push({
+        game: gameKey,
+        won: Boolean(won),
+        ms: Math.round(cleanMs),
+        diff: diffKey
+      });
+      if (state.roundHistory.length > 80) state.roundHistory.shift();
+
+      let usedShield = false;
+      let evalRes;
+
+      if (!won && state.shields > 0) {
+        usedShield = true;
+        state.shields -= 1;
+        evalRes = {
+          pointsEarned: 25,
+          nextStreak: state.streak,
+          shieldGained: false,
+          multiplier: 1
+        };
+      } else {
+        evalRes = pyEvaluateRound(won, cleanMs, state.streak, state.chaosMode, diffKey);
+      }
+
+      state.streak = evalRes.nextStreak;
+      if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+      if (evalRes.shieldGained) state.shields += 1;
+
+      state.score += evalRes.pointsEarned;
+      if (state.score > state.bestScore) state.bestScore = state.score;
+
+      const isNewPR = updatePersonalRecord(gameKey, won, evalRes.pointsEarned, cleanMs);
+
+      const coachText = pyGetCoachLine(state.coach, won, usedShield);
+      if (context === "feed") {
+        document.getElementById("feedCoachLine").textContent = `“${coachText}”`;
+      }
+
+      flashOutcomeOnStage(context, won);
+
+      if (isNewPR) {
+        showNewPRToast(gameKey, evalRes.pointsEarned, context);
+      } else if (usedShield) {
+        setStatus(`🛡️ Shield saved your ${state.streak} streak! +25 PTS`);
+      } else if (won) {
+        setStatus(`✓ ${GAME_META[gameKey].title} cleared in ${Math.round(cleanMs)}ms (+${evalRes.pointsEarned} PTS, ${evalRes.multiplier}×)`);
+      } else {
+        setStatus(`✕ ${GAME_META[gameKey].title} missed — streak reset.`);
+      }
+
+      if (state.chaosMode && Math.random() < 0.35) {
+        triggerChaosPopup();
+      }
+
+      saveState();
+      syncHUD();
+      return { ...evalRes, usedShield, coachText, isNewPR };
+    }
+
+    function triggerChaosPopup() {
+      const lines = [
+        "1.25× Chaos multiplier active—keep your eyes off notifications.",
+        "Quick check: unclench your jaw and drop your shoulders.",
+        "Don't autopilot—read the exact prompt before tapping.",
+        "Your attention is currency. Spend it deliberately."
+      ];
+      const popup = document.getElementById("chaosPopup");
+      document.getElementById("chaosPopupText").textContent = lines[Math.floor(Math.random() * lines.length)];
+      popup.classList.remove("hidden");
+    }
+
+    function startFeedFromVeil() {
+      const veil = document.getElementById("feedVeil");
+      veil.classList.add("feed-veil-hidden");
+      feedLoopActive = true;
+      feedRoundNum = 1;
+      state.recentGames = [];
+      saveState();
+      syncHUD();
+
+      const mount = document.getElementById("feedCardMount");
+      let count = 3;
+      mount.innerHTML = `
+        <div class="text-center py-12">
+          <div class="text-xs font-mono-code uppercase tracking-widest text-zinc-400 mb-2">Feed Starting In</div>
+          <div id="countdownDigit" class="text-6xl font-black font-mono-code text-[var(--accent-primary)]">${count}</div>
+        </div>
+      `;
+
+      clearInterval(feedCountdownInterval);
+      feedCountdownInterval = setInterval(() => {
+        count -= 1;
+        const digit = document.getElementById("countdownDigit");
+        if (count > 0) {
+          if (digit) digit.textContent = String(count);
+        } else {
+          clearInterval(feedCountdownInterval);
+          const firstGame = pyPickNextFeedGame(state.recentGames);
+          loadFeedReel(firstGame);
+        }
+      }, 650);
+    }
+
+    function stopFeedLoop() {
+      runCleanup();
+      feedLoopActive = false;
+      const veil = document.getElementById("feedVeil");
+      veil.classList.remove("feed-veil-hidden");
+      const bar = document.getElementById("feedTimerBar");
+      if (bar) {
+        bar.style.transform = "scaleX(1)";
+        bar.style.backgroundColor = "var(--accent-primary)";
+      }
+      syncHUD();
+      setStatus("Feed stopped. Tap Start Feed Loop whenever you're ready.");
+    }
+
+    function startFeedTimer(durationMs, onExpire) {
+      if (feedTimerRaf) cancelAnimationFrame(feedTimerRaf);
+      feedRoundDurationMs = durationMs;
+      feedRoundStartPerf = performance.now();
+      const bar = document.getElementById("feedTimerBar");
+      const readout = document.getElementById("feedClockReadout");
+
+      function tick(now) {
+        if (!feedLoopActive) return;
+        const elapsed = now - feedRoundStartPerf;
+        const remaining = Math.max(0, feedRoundDurationMs - elapsed);
+        const ratio = remaining / feedRoundDurationMs;
+
+        if (bar) {
+          bar.style.transform = `scaleX(${ratio.toFixed(4)})`;
+          if (ratio < 0.25) {
+            bar.style.backgroundColor = "#fb7185";
+          } else if (ratio < 0.5) {
+            bar.style.backgroundColor = "#fbbf24";
+          } else {
+            bar.style.backgroundColor = "var(--accent-primary)";
+          }
+        }
+        if (readout) {
+          readout.textContent = `${(remaining / 1000).toFixed(1)}s`;
+        }
+
+        if (remaining <= 0) {
+          feedTimerRaf = null;
+          onExpire();
+          return;
+        }
+        feedTimerRaf = requestAnimationFrame(tick);
+      }
+
+      feedTimerRaf = requestAnimationFrame(tick);
+    }
+
+    function loadFeedReel(gameKey) {
+      runCleanup();
+      currentFeedGame = gameKey;
+      state.recentGames.push(gameKey);
+      if (state.recentGames.length > 6) state.recentGames.shift();
+      saveState();
+
+      const data = pyGenerateRound(gameKey, state.feedDiff);
+      document.getElementById("feedGameBadge").textContent = GAME_META[gameKey].title.toUpperCase();
+      document.getElementById("feedSubBadge").textContent = data.subLabel || "";
+      document.getElementById("feedRoundCounter").textContent = `REEL #${feedRoundNum}`;
+
+      const mount = document.getElementById("feedCardMount");
+      mount.classList.remove("card-enter");
+      void mount.offsetWidth;
+      mount.classList.add("card-enter");
+
+      let finished = false;
+      const roundStart = performance.now();
+
+      const finishRound = (won, customMs = null) => {
+        if (finished) return;
+        finished = true;
+        if (feedTimerRaf) cancelAnimationFrame(feedTimerRaf);
+        const elapsed = customMs !== null ? customMs : (performance.now() - roundStart);
+        recordRoundOutcome({
+          gameKey,
+          won,
+          reactionMs: elapsed,
+          context: "feed",
+          diffKey: state.feedDiff
+        });
+
+        feedAdvanceTimeout = setTimeout(() => {
+          if (!feedLoopActive) return;
+          feedRoundNum += 1;
+          const nextG = pyPickNextFeedGame(state.recentGames);
+          loadFeedReel(nextG);
+        }, 920);
+      };
+
+      activeCleanup = renderGameInto(mount, gameKey, data, finishRound);
+      startFeedTimer(getFeedDurationMs(), () => finishRound(false, getFeedDurationMs()));
+    }
+
+    function openGamesGrid() {
+      runCleanup();
+      activeSoloGame = null;
+      document.getElementById("soloStageView").classList.add("hidden");
+      document.getElementById("bentoGridView").classList.remove("hidden");
+      renderAllPRBadges();
+      setStatus("Select a cognitive drill to train solo.");
+    }
+
+    function launchSoloGame(gameKey) {
+      runCleanup();
+      activeSoloGame = gameKey;
+      document.getElementById("bentoGridView").classList.add("hidden");
+      document.getElementById("soloStageView").classList.remove("hidden");
+      requestAnimationFrame(() => positionPill("soloDiffSlidingPill", ".solo-diff-btn", "data-solo-diff", state.soloDiff, true));
+
+      document.getElementById("soloGameTitle").textContent = GAME_META[gameKey].title;
+      document.getElementById("soloGameDesc").textContent = GAME_META[gameKey].desc;
+      renderAllPRBadges();
+
+      const data = pyGenerateRound(gameKey, state.soloDiff);
+      const mount = document.getElementById("soloCardMount");
+      mount.classList.remove("card-enter");
+      void mount.offsetWidth;
+      mount.classList.add("card-enter");
+
+      let finished = false;
+      const startPerf = performance.now();
+
+      const finishSolo = (won, customMs = null) => {
+        if (finished) return;
+        finished = true;
+        const ms = customMs !== null ? customMs : (performance.now() - startPerf);
+        recordRoundOutcome({
+          gameKey,
+          won,
+          reactionMs: ms,
+          context: "solo",
+          diffKey: state.soloDiff
+        });
+        soloAdvanceTimeout = setTimeout(() => {
+          if (activeSoloGame === gameKey) {
+            launchSoloGame(gameKey);
+          }
+        }, 1050);
+      };
+
+      activeCleanup = renderGameInto(mount, gameKey, data, finishSolo);
+    }
+
+    function startSprint() {
+      runCleanup();
+      sprintActive = true;
+      sprintRemainingMs = 60000;
+      sprintCleared = 0;
+      sprintScore = 0;
+      sprintLastTickPerf = performance.now();
+
+      document.getElementById("sprintLobby").classList.add("hidden");
+      document.getElementById("sprintSummaryBox").classList.add("hidden");
+      document.getElementById("sprintActiveStage").classList.remove("hidden");
+      document.getElementById("sprintClearedDisplay").textContent = "0";
+      document.getElementById("sprintTimerDisplay").textContent = "60.0s";
+
+      loadNextSprintDrill();
+
+      function sprintTick(now) {
+        if (!sprintActive) return;
+        const dt = now - sprintLastTickPerf;
+        sprintLastTickPerf = now;
+        sprintRemainingMs = Math.max(0, sprintRemainingMs - dt);
+        document.getElementById("sprintTimerDisplay").textContent = `${(sprintRemainingMs / 1000).toFixed(1)}s`;
+
+        if (sprintRemainingMs <= 0) {
+          stopSprint(true);
+          return;
+        }
+        sprintRaf = requestAnimationFrame(sprintTick);
+      }
+      sprintRaf = requestAnimationFrame(sprintTick);
+    }
+
+    function loadNextSprintDrill() {
+      if (!sprintActive) return;
+      const sprintPool = ["stroop", "logic", "mathblitz", "mirrortrap", "herdtrap", "reflex"];
+      const gKey = sprintPool[Math.floor(Math.random() * sprintPool.length)];
+      const sprintDiff = sprintRemainingMs > 38000 ? "lowkey" : (sprintRemainingMs > 18000 ? "locked_in" : "cooked");
+      const data = pyGenerateRound(gKey, sprintDiff);
+      const mount = document.getElementById("sprintCardMount");
+      let done = false;
+      const t0 = performance.now();
+
+      const onSprintRoundDone = (won) => {
+        if (done || !sprintActive) return;
+        done = true;
+        const ms = performance.now() - t0;
+        const res = recordRoundOutcome({
+          gameKey: gKey,
+          won,
+          reactionMs: ms,
+          context: "sprint",
+          diffKey: sprintDiff
+        });
+        if (won) {
+          sprintCleared += 1;
+          sprintScore += res.pointsEarned;
+          document.getElementById("sprintClearedDisplay").textContent = String(sprintCleared);
+        }
+        sprintAdvanceTimeout = setTimeout(() => {
+          if (sprintActive) loadNextSprintDrill();
+        }, 420);
+      };
+
+      activeCleanup = renderGameInto(mount, gKey, data, onSprintRoundDone);
+    }
+
+    function stopSprint(showSummary) {
+      sprintActive = false;
+      if (sprintRaf) cancelAnimationFrame(sprintRaf);
+      sprintRaf = null;
+      runCleanup();
+
+      document.getElementById("sprintActiveStage").classList.add("hidden");
+      if (showSummary) {
+        document.getElementById("sprintSummaryBox").classList.remove("hidden");
+        document.getElementById("sprintFinalScoreText").textContent = `${sprintScore.toLocaleString()} SPRINT PTS`;
+        document.getElementById("sprintSummaryStats").textContent = `You cleared ${sprintCleared} rapid drills in 60 seconds. Total Bank: ${state.score.toLocaleString()} PTS.`;
+      } else {
+        document.getElementById("sprintLobby").classList.remove("hidden");
+      }
+    }
+
+    function renderGameInto(container, gameKey, data, onComplete) {
+      if (gameKey === "schulte") return renderSchulte(container, data, onComplete);
+      if (gameKey === "stroop") return renderStroop(container, data, onComplete);
+      if (gameKey === "grid") return renderFlashGrid(container, data, onComplete);
+      if (gameKey === "reflex") return renderReflexSnap(container, data, onComplete);
+      if (gameKey === "logic") return renderLogicBlitz(container, data, onComplete);
+      if (gameKey === "mathblitz") return renderMathBlitz(container, data, onComplete);
+      if (gameKey === "timeblind") return renderTimeBlind(container, data, onComplete);
+      if (gameKey === "ghosttrack") return renderGhostTrack(container, data, onComplete);
+      if (gameKey === "mirrortrap") return renderMirrorTrap(container, data, onComplete);
+      return renderHerdTrap(container, data, onComplete);
+    }
+
+    function renderSchulte(container, data, onComplete) {
+      const seq = data.sequence || [];
+      let stepIdx = 0;
+      let mistakes = 0;
+      const maxMistakes = data.maxMistakes || 99;
+      let locked = false;
+
+      const targetNum = () => seq[stepIdx];
+      const promptText = data.mode === "descending"
+        ? `Tap in REVERSE order (${seq[0]} → ${seq[seq.length - 1]})`
+        : `Tap numbers in ascending order (1 → ${seq.length})`;
+
+      container.innerHTML = `
+        <div class="text-center mb-4">
+          <div class="text-xs font-mono-code uppercase tracking-wider text-zinc-400">${promptText}</div>
+          <div class="mt-1.5 flex items-center justify-center gap-4 text-sm font-mono-code">
+            <span>NEXT: <strong id="schulteNextVal" class="text-[var(--accent-primary)] text-lg">${targetNum()}</strong></span>
+            <span class="text-zinc-400">PROGRESS: <strong id="schulteProgVal">0/${seq.length}</strong></span>
+            ${maxMistakes < 50 ? `<span class="text-rose-300">MISSES: <strong id="schulteMissVal">0/${maxMistakes}</strong></span>` : ""}
+          </div>
+        </div>
+        <div id="schulteGrid" class="grid gap-2 max-w-md mx-auto" style="grid-template-columns: repeat(${data.cols}, minmax(0, 1fr));"></div>
+      `;
+
+      const gridEl = container.querySelector("#schulteGrid");
+      data.cells.forEach(num => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "schulte-cell h-14 sm:h-16 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 font-mono-code font-extrabold text-base sm:text-lg text-white cursor-pointer";
+        btn.textContent = String(num);
+        btn.addEventListener("click", () => {
+          if (locked) return;
+          if (num === targetNum()) {
+            btn.disabled = true;
+            btn.classList.remove("bg-white/5", "hover:bg-white/10", "border-white/15");
+            btn.classList.add("answer-correct");
+            stepIdx += 1;
+            container.querySelector("#schulteProgVal").textContent = `${stepIdx}/${seq.length}`;
+            if (stepIdx >= seq.length) {
+              locked = true;
+              onComplete(true);
+            } else {
+              container.querySelector("#schulteNextVal").textContent = String(targetNum());
+            }
+          } else {
+            mistakes += 1;
+            btn.classList.add("answer-wrong");
+            setTimeout(() => btn.classList.remove("answer-wrong"), 360);
+            const missEl = container.querySelector("#schulteMissVal");
+            if (missEl) missEl.textContent = `${mistakes}/${maxMistakes}`;
+            if (mistakes > maxMistakes) {
+              locked = true;
+              onComplete(false);
+            }
+          }
+        });
+        gridEl.appendChild(btn);
+      });
+
+      return () => { locked = true; };
+    }
+
+    function renderStroop(container, data, onComplete) {
+      let rIdx = 0;
+      let locked = false;
+      const rounds = data.rounds || [];
+
+      function drawRound() {
+        const r = rounds[rIdx];
+        const isInvert = r.mode === "match_word";
+        container.innerHTML = `
+          <div class="text-center">
+            <div class="inline-block px-3 py-1 rounded-full text-xs font-mono-code uppercase tracking-wider mb-3 ${isInvert ? "bg-rose-500/20 border border-rose-400/40 text-rose-200 font-bold" : "bg-white/10 text-zinc-300"}">
+              ${isInvert ? "INVERT RULE: Match the WORD meaning!" : "Standard Rule: Match the INK color (ignore word)"} • ${rIdx + 1}/${rounds.length}
+            </div>
+            <div id="stroopWord" class="text-5xl sm:text-6xl font-black tracking-tight my-5 select-none" style="color:${r.inkHex}">
+              ${r.word}
+            </div>
+            <div class="grid grid-cols-2 gap-3 max-w-md mx-auto mt-4">
+              ${r.choices.map((c, i) => `
+                <button data-stroop-idx="${i}" type="button" class="stroop-opt py-3.5 px-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 font-mono-code font-bold text-sm flex items-center justify-center gap-2.5 transition cursor-pointer">
+                  <span class="h-3.5 w-3.5 rounded-full shrink-0 border border-white/25" style="background:${c.swatchHex}"></span>
+                  <span>${c.label}</span>
+                </button>
+              `).join("")}
+            </div>
+          </div>
+        `;
+
+        const allBtns = Array.from(container.querySelectorAll(".stroop-opt"));
+        allBtns.forEach(btn => {
+          btn.addEventListener("click", () => {
+            if (locked) return;
+            locked = true;
+            const idx = Number(btn.getAttribute("data-stroop-idx"));
+            const chosen = r.choices[idx];
+            const correctBtn = allBtns.find((_, i) => r.choices[i].isCorrect);
+
+            if (chosen && chosen.isCorrect) {
+              btn.classList.add("answer-correct");
+              rIdx += 1;
+              if (rIdx >= rounds.length) {
+                onComplete(true);
+              } else {
+                setTimeout(() => {
+                  locked = false;
+                  drawRound();
+                }, 260);
+              }
+            } else {
+              btn.classList.add("answer-wrong");
+              if (correctBtn) correctBtn.classList.add("answer-correct");
+              onComplete(false);
+            }
+          });
+        });
+      }
+
+      drawRound();
+      return () => { locked = true; };
+    }
+
+    function renderFlashGrid(container, data, onComplete) {
+      const size = data.size || 3;
+      const total = size * size;
+      const targetSet = new Set(data.targets || []);
+      const pickedSet = new Set();
+      let phase = "memorize";
+      let mistakes = 0;
+      const maxMistakes = data.maxMistakes ?? 1;
+
+      container.innerHTML = `
+        <div class="text-center mb-4">
+          <div id="gridPhaseLabel" class="text-xs font-mono-code uppercase tracking-widest text-[var(--accent-primary)] font-bold">
+            Memorize ${targetSet.size} highlighted tiles...
+          </div>
+          <div id="gridCounterLabel" class="text-xs font-mono-code text-zinc-400 mt-1">
+            Found 0 / ${targetSet.size}
+          </div>
+        </div>
+        <div id="flashMatrix" class="grid gap-2.5 max-w-xs mx-auto" style="grid-template-columns: repeat(${size}, minmax(0, 1fr));"></div>
+      `;
+
+      const matrix = container.querySelector("#flashMatrix");
+      const tiles = [];
+      for (let i = 0; i < total; i++) {
+        const t = document.createElement("button");
+        t.type = "button";
+        const isTarget = targetSet.has(i);
+        t.className = `h-16 sm:h-20 rounded-2xl border transition cursor-pointer ${isTarget ? "bg-[var(--accent-primary)]/85 border-[var(--accent-primary)] shadow-lg" : "bg-white/5 border-white/15"}`;
+        t.addEventListener("click", () => {
+          if (phase !== "recall" || pickedSet.has(i)) return;
+          if (targetSet.has(i)) {
+            pickedSet.add(i);
+            t.className = "h-16 sm:h-20 rounded-2xl border answer-correct cursor-default";
+            container.querySelector("#gridCounterLabel").textContent = `Found ${pickedSet.size} / ${targetSet.size}`;
+            if (pickedSet.size === targetSet.size) {
+              phase = "done";
+              onComplete(true);
+            }
+          } else {
+            mistakes += 1;
+            t.className = "h-16 sm:h-20 rounded-2xl border answer-wrong cursor-pointer";
+            setTimeout(() => {
+              if (phase === "recall" && !pickedSet.has(i)) {
+                t.className = "h-16 sm:h-20 rounded-2xl border bg-white/5 hover:bg-white/10 border-white/15 cursor-pointer";
+              }
+            }, 360);
+            if (mistakes > maxMistakes) {
+              phase = "done";
+              tiles.forEach((el, idx) => {
+                if (targetSet.has(idx) && !pickedSet.has(idx)) {
+                  el.className = "h-16 sm:h-20 rounded-2xl border answer-correct opacity-80";
+                }
+              });
+              onComplete(false);
+            }
+          }
+        });
+        matrix.appendChild(t);
+        tiles.push(t);
+      }
+
+      const hideTimer = setTimeout(() => {
+        if (phase !== "memorize") return;
+        phase = "recall";
+        tiles.forEach(el => {
+          el.className = "h-16 sm:h-20 rounded-2xl border bg-white/5 hover:bg-white/10 border-white/15 cursor-pointer";
+        });
+        const lbl = container.querySelector("#gridPhaseLabel");
+        if (lbl) lbl.textContent = "Now tap the tiles you memorized!";
+      }, data.flashMs || 950);
+
+      return () => {
+        phase = "done";
+        clearTimeout(hideTimer);
+      };
+    }
+
+    function renderReflexSnap(container, data, onComplete) {
+      let statePhase = "waiting";
+      let greenPerf = 0;
+      const timers = [];
+
+      container.innerHTML = `
+        <div class="text-center">
+          <p class="text-xs font-mono-code uppercase tracking-widest text-zinc-400 mb-4">
+            Target: &lt; ${data.maxMs}ms • ${data.fakeouts > 0 ? "Ignore RED fakeouts!" : "Wait for GREEN"}
+          </p>
+          <button id="reflexPad" type="button" class="w-full max-w-md mx-auto h-52 rounded-3xl border-2 border-white/15 bg-zinc-900/90 flex flex-col items-center justify-center gap-2 transition cursor-pointer">
+            <span id="reflexMainText" class="text-2xl sm:text-3xl font-black tracking-tight text-zinc-300">WAIT FOR GREEN...</span>
+            <span id="reflexSubText" class="text-xs font-mono-code text-zinc-400">Hold steady</span>
+          </button>
+        </div>
+      `;
+
+      const pad = container.querySelector("#reflexPad");
+      const mainTxt = container.querySelector("#reflexMainText");
+      const subTxt = container.querySelector("#reflexSubText");
+
+      const triggerGreen = () => {
+        if (statePhase === "done") return;
+        statePhase = "green";
+        greenPerf = performance.now();
+        pad.className = "w-full max-w-md mx-auto h-52 rounded-3xl border-2 border-emerald-300 bg-emerald-500/25 flex flex-col items-center justify-center gap-2 transition cursor-pointer shadow-lg";
+        mainTxt.textContent = "SNAP NOW!";
+        mainTxt.className = "text-3xl sm:text-4xl font-black tracking-tight text-emerald-200";
+        subTxt.textContent = "Tap or press SPACE";
+      };
+
+      const scheduleFakeoutsAndGreen = () => {
+        const fakeCount = data.fakeouts || 0;
+        const baseDelay = data.delayMs || 1500;
+        if (fakeCount === 0) {
+          timers.push(setTimeout(triggerGreen, baseDelay));
+          return;
+        }
+        const step = Math.floor(baseDelay / (fakeCount + 1));
+        for (let i = 0; i < fakeCount; i++) {
+          const at = step * (i + 1);
+          timers.push(setTimeout(() => {
+            if (statePhase !== "waiting") return;
+            statePhase = "fake";
+            pad.className = "w-full max-w-md mx-auto h-52 rounded-3xl border-2 border-rose-400 bg-rose-500/25 flex flex-col items-center justify-center gap-2 answer-wrong cursor-pointer";
+            mainTxt.textContent = "RED FAKEOUT — DON'T TAP";
+            mainTxt.className = "text-xl sm:text-2xl font-black text-rose-200";
+            subTxt.textContent = "Hold your fire...";
+            timers.push(setTimeout(() => {
+              if (statePhase === "fake") {
+                statePhase = "waiting";
+                pad.classList.remove("answer-wrong");
+                pad.className = "w-full max-w-md mx-auto h-52 rounded-3xl border-2 border-white/15 bg-zinc-900/90 flex flex-col items-center justify-center gap-2 cursor-pointer";
+                mainTxt.textContent = "WAIT FOR GREEN...";
+                mainTxt.className = "text-2xl sm:text-3xl font-black tracking-tight text-zinc-300";
+              }
+            }, 520));
+          }, at));
+        }
+        timers.push(setTimeout(triggerGreen, baseDelay + 450));
+      };
+
+      const handleSnap = () => {
+        if (statePhase === "done") return;
+        if (statePhase === "green") {
+          const rt = Math.round(performance.now() - greenPerf);
+          statePhase = "done";
+          const passed = rt <= data.maxMs;
+          pad.className = `w-full max-w-md mx-auto h-52 rounded-3xl border-2 flex flex-col items-center justify-center gap-2 ${passed ? "answer-correct" : "answer-wrong"}`;
+          mainTxt.textContent = `${rt} ms`;
+          subTxt.textContent = passed ? `Under ${data.maxMs}ms target!` : `Too slow (target ≤ ${data.maxMs}ms)`;
+          onComplete(passed, rt);
+        } else {
+          statePhase = "done";
+          pad.className = "w-full max-w-md mx-auto h-52 rounded-3xl border-2 answer-wrong flex flex-col items-center justify-center gap-2";
+          mainTxt.textContent = statePhase === "fake" ? "FELL FOR FAKEOUT!" : "TOO EARLY!";
+          subTxt.textContent = "Wait for the green signal";
+          onComplete(false, 999);
+        }
+      };
+
+      pad.addEventListener("click", handleSnap);
+      scheduleFakeoutsAndGreen();
+
+      return () => {
+        statePhase = "done";
+        timers.forEach(clearTimeout);
+      };
+    }
+
+    function renderMultipleChoiceCard(container, badgeText, headlineHtml, options, correctIndex, onComplete) {
+      let locked = false;
+      container.innerHTML = `
+        <div class="text-center">
+          <div class="text-xs font-mono-code uppercase tracking-widest text-zinc-400 mb-3">${badgeText}</div>
+          <div class="my-5">${headlineHtml}</div>
+          <div class="grid grid-cols-2 gap-3 max-w-md mx-auto mt-5">
+            ${options.map((opt, idx) => `
+              <button data-mc-idx="${idx}" type="button" class="mc-btn py-4 px-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 font-mono-code font-extrabold text-lg text-white transition cursor-pointer">
+                <span class="text-xs text-zinc-400 mr-1.5">${idx + 1}.</span>${opt}
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+
+      const btns = Array.from(container.querySelectorAll(".mc-btn"));
+      btns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (locked) return;
+          locked = true;
+          const chosenIdx = Number(btn.getAttribute("data-mc-idx"));
+          const isRight = chosenIdx === correctIndex;
+          if (isRight) {
+            btn.classList.add("answer-correct");
+          } else {
+            btn.classList.add("answer-wrong");
+            if (btns[correctIndex]) btns[correctIndex].classList.add("answer-correct");
+          }
+          onComplete(isRight);
+        });
+      });
+
+      return () => { locked = true; };
+    }
+
+    function renderLogicBlitz(container, data, onComplete) {
+      const seqHtml = `
+        <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+          ${data.sequence.map(n => `
+            <span class="px-4 py-2.5 rounded-2xl bg-white/10 border border-white/15 font-mono-code font-extrabold text-xl sm:text-2xl">${n}</span>
+          `).join("")}
+          <span class="px-4 py-2.5 rounded-2xl bg-[var(--accent-primary)]/15 border border-dashed border-[var(--accent-primary)] font-mono-code font-extrabold text-xl sm:text-2xl text-[var(--accent-primary)]">?</span>
+        </div>
+      `;
+      return renderMultipleChoiceCard(container, "Complete the Pattern", seqHtml, data.options, data.correctIndex, onComplete);
+    }
+
+    function renderMathBlitz(container, data, onComplete) {
+      let qIdx = 0;
+      let locked = false;
+      let innerCleanup = null;
+      const qs = data.questions || [];
+
+      function showQ() {
+        const q = qs[qIdx];
+        const eqHtml = `
+          <div class="text-xs font-mono-code uppercase tracking-widest text-[var(--accent-secondary)] mb-2">
+            Equation ${qIdx + 1} of ${qs.length}
+          </div>
+          <div class="text-4xl sm:text-5xl font-black font-mono-code tracking-tight text-white">
+            ${q.prompt}
+          </div>
+        `;
+        innerCleanup = renderMultipleChoiceCard(container, "Rapid Arithmetic", eqHtml, q.options, q.correctIndex, (isRight) => {
+          if (locked) return;
+          if (!isRight) {
+            locked = true;
+            onComplete(false);
+            return;
+          }
+          qIdx += 1;
+          if (qIdx >= qs.length) {
+            locked = true;
+            onComplete(true);
+          } else {
+            setTimeout(() => {
+              if (!locked) showQ();
+            }, 240);
+          }
+        });
+      }
+
+      showQ();
+      return () => {
+        locked = true;
+        if (typeof innerCleanup === "function") innerCleanup();
+      };
+    }
+
+    function renderTimeBlind(container, data, onComplete) {
+      let phase = "running";
+      const startPerf = performance.now();
+      const targetMs = data.targetSec * 1000;
+      const hideMs = data.hideAfterSec * 1000;
+      const tolMs = data.toleranceSec * 1000;
+      let rafId = null;
+
+      container.innerHTML = `
+        <div class="text-center">
+          <div class="text-xs font-mono-code uppercase tracking-widest text-zinc-400 mb-2">
+            Stop at <strong class="text-[var(--accent-primary)]">${data.targetSec.toFixed(1)}s</strong> (±${data.toleranceSec.toFixed(2)}s)
+          </div>
+          <div id="tbClockFace" class="text-5xl sm:text-6xl font-black font-mono-code my-5 text-white">0.00s</div>
+          <div id="tbDecoyPulse" class="h-3 w-3 rounded-full mx-auto mb-5 bg-[var(--accent-secondary)]/30"></div>
+          <button id="tbStopBtn" type="button" class="accent-btn px-8 py-4 rounded-2xl text-base font-black uppercase tracking-wider cursor-pointer">
+            STOP CLOCK NOW
+          </button>
+        </div>
+      `;
+
+      const face = container.querySelector("#tbClockFace");
+      const decoy = container.querySelector("#tbDecoyPulse");
+      const stopBtn = container.querySelector("#tbStopBtn");
+
+      const handleStop = () => {
+        if (phase !== "running") return;
+        phase = "done";
+        if (rafId) cancelAnimationFrame(rafId);
+        const actualMs = performance.now() - startPerf;
+        const diffMs = Math.abs(actualMs - targetMs);
+        const won = diffMs <= tolMs;
+        face.textContent = `${(actualMs / 1000).toFixed(2)}s`;
+        face.className = `text-5xl sm:text-6xl font-black font-mono-code my-5 ${won ? "text-emerald-300" : "text-rose-400"}`;
+        stopBtn.classList.add(won ? "answer-correct" : "answer-wrong");
+        stopBtn.textContent = won ? `ON TARGET (±${(diffMs / 1000).toFixed(2)}s)` : `OFF BY ${(diffMs / 1000).toFixed(2)}s`;
+        onComplete(won, diffMs);
+      };
+
+      stopBtn.addEventListener("click", handleStop);
+
+      function loop(now) {
+        if (phase !== "running") return;
+        const elapsed = now - startPerf;
+        if (elapsed < hideMs) {
+          face.textContent = `${(elapsed / 1000).toFixed(2)}s`;
+        } else {
+          face.textContent = "???.??s";
+          face.classList.add("text-zinc-500");
+        }
+
+        if (data.decoys && decoy) {
+          const rate = data.diff === "cooked" ? 310 : 520;
+          const pulseOn = Math.floor(elapsed / rate) % 2 === 0;
+          decoy.style.transform = pulseOn ? "scale(1.45)" : "scale(0.85)";
+          decoy.style.opacity = pulseOn ? "1" : "0.25";
+        }
+
+        if (elapsed > targetMs + 3500) {
+          phase = "done";
+          face.textContent = "TIME UP";
+          stopBtn.classList.add("answer-wrong");
+          onComplete(false, 3500);
+          return;
+        }
+        rafId = requestAnimationFrame(loop);
+      }
+
+      rafId = requestAnimationFrame(loop);
+
+      return () => {
+        phase = "done";
+        if (rafId) cancelAnimationFrame(rafId);
+      };
+    }
+
+    function renderGhostTrack(container, data, onComplete) {
+      container.innerHTML = `
+        <div class="text-center">
+          <div id="gtInstruction" class="text-xs font-mono-code uppercase tracking-widest text-[var(--accent-primary)] font-bold mb-3">
+            Watch the highlighted orbs...
+          </div>
+          <canvas id="gtCanvas" width="420" height="250" class="w-full max-w-md mx-auto rounded-2xl bg-black/50 border border-white/15 cursor-pointer"></canvas>
+        </div>
+      `;
+
+      const canvas = container.querySelector("#gtCanvas");
+      const ctx = canvas.getContext("2d");
+      const instr = container.querySelector("#gtInstruction");
+      const orbs = data.orbs.map(o => ({
+        ...o,
+        x: o.xNorm * canvas.width,
+        y: o.yNorm * canvas.height,
+        r: 15,
+        picked: false,
+        wrongPick: false
+      }));
+
+      let phase = "highlight";
+      let mistakes = 0;
+      const maxMistakes = data.maxMistakes ?? 1;
+      let lastFramePerf = performance.now();
+      let animId = null;
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const o of orbs) {
+          ctx.beginPath();
+          ctx.arc(o.x, o.y, o.r, 0, Math.PI * 2);
+          if (phase === "highlight" && o.isTarget) {
+            ctx.fillStyle = "#b8ff2c";
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#ffffff";
+            ctx.stroke();
+          } else if (o.picked) {
+            ctx.fillStyle = "#34d399";
+            ctx.fill();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = "#ecfdf5";
+            ctx.stroke();
+          } else if (o.wrongPick) {
+            ctx.fillStyle = "#fb7185";
+            ctx.fill();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = "#ffe4e6";
+            ctx.stroke();
+          } else {
+            ctx.fillStyle = "rgba(255,255,255,0.14)";
+            ctx.fill();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = "rgba(255,255,255,0.35)";
+            ctx.stroke();
+          }
+        }
+      }
+
+      function step(now) {
+        if (phase === "done") return;
+        const dtSec = Math.min(0.05, Math.max(0.001, (now - lastFramePerf) / 1000));
+        lastFramePerf = now;
+
+        if (phase === "moving") {
+          const pxPerSec = 52;
+          for (const o of orbs) {
+            o.x += o.vx * pxPerSec * dtSec;
+            o.y += o.vy * pxPerSec * dtSec;
+            if (o.x < o.r + 8) { o.x = o.r + 8; o.vx = Math.abs(o.vx); }
+            if (o.x > canvas.width - o.r - 8) { o.x = canvas.width - o.r - 8; o.vx = -Math.abs(o.vx); }
+            if (o.y < o.r + 8) { o.y = o.r + 8; o.vy = Math.abs(o.vy); }
+            if (o.y > canvas.height - o.r - 8) { o.y = canvas.height - o.r - 8; o.vy = -Math.abs(o.vy); }
+          }
+        }
+        draw();
+        animId = requestAnimationFrame(step);
+      }
+
+      canvas.addEventListener("click", (e) => {
+        if (phase !== "select") return;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const cx = (e.clientX - rect.left) * scaleX;
+        const cy = (e.clientY - rect.top) * scaleY;
+
+        const hit = orbs.find(o => Math.hypot(o.x - cx, o.y - cy) <= o.r + 8 && !o.picked);
+        if (!hit) return;
+
+        if (hit.isTarget) {
+          hit.picked = true;
+          draw();
+          const foundCount = orbs.filter(o => o.isTarget && o.picked).length;
+          instr.textContent = `Found ${foundCount} / ${data.targetCount} target orbs`;
+          if (foundCount >= data.targetCount) {
+            phase = "done";
+            onComplete(true);
+          }
+        } else {
+          hit.wrongPick = true;
+          draw();
+          mistakes += 1;
+          if (mistakes > maxMistakes) {
+            phase = "done";
+            for (const o of orbs) {
+              if (o.isTarget) o.picked = true;
+            }
+            draw();
+            onComplete(false);
+          } else {
+            instr.textContent = `Not a target orb (${mistakes}/${maxMistakes} miss allowed)`;
+          }
+        }
+      });
+
+      const t1 = setTimeout(() => {
+        if (phase === "highlight") {
+          phase = "moving";
+          lastFramePerf = performance.now();
+          instr.textContent = "Track them as they move...";
+        }
+      }, 950);
+
+      const t2 = setTimeout(() => {
+        if (phase === "moving") {
+          phase = "select";
+          draw();
+          instr.textContent = `Click the ${data.targetCount} orbs that were highlighted!`;
+        }
+      }, 950 + (data.trackMs || 2600));
+
+      animId = requestAnimationFrame(step);
+
+      return () => {
+        phase = "done";
+        clearTimeout(t1);
+        clearTimeout(t2);
+        if (animId) cancelAnimationFrame(animId);
+      };
+    }
+
+    function renderShapeSvg(coords, accentColor) {
+      const xs = coords.map(p => p[0]);
+      const ys = coords.map(p => p[1]);
+      const maxX = Math.max(...xs) + 1;
+      const maxY = Math.max(...ys) + 1;
+      const cell = 24;
+      const w = maxX * cell + 16;
+      const h = maxY * cell + 16;
+
+      const rects = coords.map(([x, y]) =>
+        `<rect x="${8 + x * cell}" y="${8 + y * cell}" width="${cell - 3}" height="${cell - 3}" rx="5" fill="${accentColor}" />`
+      ).join("");
+
+      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" class="mx-auto">${rects}</svg>`;
+    }
+
+    function renderMirrorTrap(container, data, onComplete) {
+      let locked = false;
+      container.innerHTML = `
+        <div class="text-center">
+          <div class="text-xs font-mono-code uppercase tracking-widest text-zinc-400 mb-4">
+            Is the right shape a <strong class="text-white">True Rotation (${data.angleDeg}°)</strong> or a <strong class="text-rose-300">Mirror Flip</strong>?
+          </div>
+          <div class="grid grid-cols-2 gap-4 max-w-md mx-auto my-4">
+            <div class="rounded-2xl bg-black/40 border border-white/10 p-4 flex flex-col items-center justify-center min-h-[130px]">
+              <span class="text-[10px] font-mono-code uppercase text-zinc-400 mb-2">Reference</span>
+              ${renderShapeSvg(data.baseCoords, "#38bdf8")}
+            </div>
+            <div class="rounded-2xl bg-black/40 border border-white/10 p-4 flex flex-col items-center justify-center min-h-[130px]">
+              <span class="text-[10px] font-mono-code uppercase text-zinc-400 mb-2">Candidate</span>
+              ${renderShapeSvg(data.candidateCoords, "var(--accent-primary)")}
+            </div>
+          </div>
+          <div class="flex items-center justify-center gap-3 mt-5">
+            <button id="rotTrueBtn" type="button" class="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/15 font-mono-code font-bold text-xs sm:text-sm cursor-pointer transition">
+              True Rotation
+            </button>
+            <button id="rotMirrorBtn" type="button" class="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/15 font-mono-code font-bold text-xs sm:text-sm cursor-pointer transition">
+              Mirror Impostor
+            </button>
+          </div>
+        </div>
+      `;
+
+      const trueBtn = container.querySelector("#rotTrueBtn");
+      const mirrorBtn = container.querySelector("#rotMirrorBtn");
+
+      trueBtn.addEventListener("click", () => {
+        if (locked) return;
+        locked = true;
+        const won = !data.isMirrored;
+        if (won) {
+          trueBtn.classList.add("answer-correct");
+        } else {
+          trueBtn.classList.add("answer-wrong");
+          mirrorBtn.classList.add("answer-correct");
+        }
+        onComplete(won);
+      });
+
+      mirrorBtn.addEventListener("click", () => {
+        if (locked) return;
+        locked = true;
+        const won = Boolean(data.isMirrored);
+        if (won) {
+          mirrorBtn.classList.add("answer-correct");
+        } else {
+          mirrorBtn.classList.add("answer-wrong");
+          trueBtn.classList.add("answer-correct");
+        }
+        onComplete(won);
+      });
+
+      return () => { locked = true; };
+    }
+
+    function renderHerdTrap(container, data, onComplete) {
+      let locked = false;
+      const degMap = { UP: 0, RIGHT: 90, DOWN: 180, LEFT: 270 };
+      const arrowGlyphs = data.arrows.map(dir => {
+        const deg = degMap[dir] || 0;
+        return `<span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 border border-white/15 font-mono-code font-bold text-lg" style="transform: rotate(${deg}deg)">↑</span>`;
+      }).join("");
+
+      container.innerHTML = `
+        <div class="text-center">
+          <div class="inline-block px-3.5 py-1 rounded-full text-xs font-mono-code uppercase tracking-wider mb-4 ${data.inverted ? "bg-rose-500/25 border border-rose-400/50 text-rose-200 font-bold" : "bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 font-bold"}">
+            ${data.inverted ? "RED WAVE: Tap the OPPOSITE of the crowd!" : "GREEN WAVE: Tap the MAJORITY crowd direction"}
+          </div>
+          <div class="flex flex-wrap items-center justify-center gap-2 max-w-md mx-auto my-4">
+            ${arrowGlyphs}
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-md mx-auto mt-5">
+            ${data.options.map(dir => `
+              <button data-herd-dir="${dir}" type="button" class="herd-btn py-3 px-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 font-mono-code font-bold text-xs cursor-pointer transition">
+                ${dir}
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+
+      const btns = Array.from(container.querySelectorAll(".herd-btn"));
+      btns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (locked) return;
+          locked = true;
+          const chosen = btn.getAttribute("data-herd-dir");
+          const won = chosen === data.correctDir;
+          const correctBtn = btns.find(b => b.getAttribute("data-herd-dir") === data.correctDir);
+          if (won) {
+            btn.classList.add("answer-correct");
+          } else {
+            btn.classList.add("answer-wrong");
+            if (correctBtn) correctBtn.classList.add("answer-correct");
+          }
+          onComplete(won);
+        });
+      });
+
+      return () => { locked = true; };
+    }
+
+    function renderBrainProfile() {
+      const profile = pyComputeBrainProfile();
+      const indexEl = document.getElementById("brainIndexScore");
+      const rankEl = document.getElementById("brainRankLabel");
+      const trendEl = document.getElementById("profileTrendBadge");
+      const winRateEl = document.getElementById("profileWinRate");
+      const playedEl = document.getElementById("profilePlayedCount");
+
+      indexEl.textContent = profile.brainIndex !== null ? String(profile.brainIndex) : "—";
+      rankEl.textContent = profile.rankLabel;
+      trendEl.textContent = profile.trend || "STEADY —";
+
+      if (profile.trend && profile.trend.includes("IMPROVING")) {
+        trendEl.className = "text-xs font-mono-code px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/35 text-emerald-200 font-bold";
+      } else if (profile.trend && profile.trend.includes("SLIPPING")) {
+        trendEl.className = "text-xs font-mono-code px-2.5 py-0.5 rounded-full bg-rose-500/20 border border-rose-400/35 text-rose-200 font-bold";
+      } else {
+        trendEl.className = "text-xs font-mono-code px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-300 font-bold";
+      }
+
+      winRateEl.textContent = profile.winRate !== null ? `${profile.winRate}%` : "—";
+      playedEl.textContent = `${profile.testedCount}/10 DRILLS TESTED`;
+
+      document.getElementById("brainInsightText").textContent = profile.insight;
+      document.getElementById("profileTotalRounds").textContent = state.totalRounds;
+      document.getElementById("profileBestStreak").textContent = state.bestStreak;
+
+      const barsWrap = document.getElementById("skillBarsContainer");
+      const kpiGrid = document.getElementById("pillarKpiGrid");
+      barsWrap.innerHTML = "";
+      kpiGrid.innerHTML = "";
+
+      for (const g of GAME_ORDER) {
+        const gInfo = profile.perGame[g] || { score: null, attempts: 0, wins: 0, avgMs: null };
+        const hasPlayed = gInfo.score !== null && gInfo.attempts > 0;
+        const sc = hasPlayed ? gInfo.score : 0;
+
+        const row = document.createElement("div");
+        row.innerHTML = `
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="font-semibold text-zinc-200">${GAME_META[g].title}</span>
+            <span class="font-mono-code ${hasPlayed ? (sc >= 70 ? "text-emerald-300" : sc >= 45 ? "text-amber-300" : "text-rose-300") : "text-zinc-500"}">
+              ${hasPlayed ? `${sc}/100 (${gInfo.wins}/${gInfo.attempts})` : "UNPLAYED"}
+            </span>
+          </div>
+          <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-500 ${hasPlayed ? (sc >= 70 ? "bg-emerald-400" : sc >= 45 ? "bg-[var(--accent-primary)]" : "bg-rose-400") : "bg-transparent"}" style="width:${sc}%"></div>
+          </div>
+        `;
+        barsWrap.appendChild(row);
+
+        const card = document.createElement("div");
+        card.className = "glass-panel rounded-2xl p-3.5";
+        card.innerHTML = `
+          <div class="text-[10px] font-mono-code uppercase text-zinc-400 truncate">${GAME_META[g].title}</div>
+          <div class="text-xl font-black mt-1 ${hasPlayed ? (sc >= 70 ? "text-emerald-300" : sc >= 45 ? "text-[var(--accent-primary)]" : "text-rose-300") : "text-zinc-500"}">
+            ${hasPlayed ? `${sc}%` : "—"}
+          </div>
+          <div class="text-[10px] font-mono-code text-zinc-400 mt-0.5 truncate">
+            ${hasPlayed ? `${Math.round((gInfo.wins / gInfo.attempts) * 100)}% acc • ${gInfo.avgMs}ms` : "No runs yet"}
+          </div>
+        `;
+        kpiGrid.appendChild(card);
+      }
+    }
+
+    function renderLeaderboard() {
+      const tbody = document.getElementById("leaderboardBody");
+      const sorted = pyUpdateLeaderboard(state.leaderboard, null);
+      state.leaderboard = sorted;
+      document.getElementById("playerCallsignInput").value = state.callsign || "YOU";
+
+      tbody.innerHTML = sorted.map((row, idx) => `
+        <tr class="${idx === 0 ? "bg-white/[0.04]" : ""}">
+          <td class="py-3 px-3 font-mono-code font-bold ${idx < 3 ? "text-[var(--accent-primary)]" : "text-zinc-400"}">#${idx + 1}</td>
+          <td class="py-3 px-3 font-bold text-white">${escapeHtml(row.name)}</td>
+          <td class="py-3 px-3 font-mono-code text-xs text-zinc-300">${escapeHtml(row.mode)}</td>
+          <td class="py-3 px-3 font-mono-code text-xs text-zinc-300">${row.streak}</td>
+          <td class="py-3 px-3 font-mono-code font-extrabold text-right text-white">${Number(row.score).toLocaleString()}</td>
+        </tr>
+      `).join("");
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function bindEvents() {
+      document.getElementById("enterAppBtn").addEventListener("click", () => {
+        document.getElementById("introVeil").classList.add("veil-dismissed");
+        requestAnimationFrame(() => syncAllLiquidPills(true));
+        setStatus("Welcome to UNROT. Jump into Feed, Games, or 60s Sprint.");
+      });
+
+      document.getElementById("replayIntroBtn").addEventListener("click", () => {
+        const veil = document.getElementById("introVeil");
+        veil.classList.remove("veil-dismissed");
+      });
+
+      document.getElementById("brandHomeBtn").addEventListener("click", () => switchTab("feed"));
+
+      document.querySelectorAll(".nav-tab").forEach(btn => {
+        btn.addEventListener("click", () => switchTab(btn.getAttribute("data-tab")));
+      });
+
+      document.querySelectorAll(".theme-pill").forEach(btn => {
+        btn.addEventListener("click", () => applyTheme(btn.getAttribute("data-theme-val"), true));
+      });
+
+      document.querySelectorAll(".coach-pill").forEach(btn => {
+        btn.addEventListener("click", () => applyCoach(btn.getAttribute("data-coach-val"), true));
+      });
+
+      document.querySelectorAll(".feed-diff-btn").forEach(btn => {
+        btn.addEventListener("click", () => applyFeedDiff(btn.getAttribute("data-feed-diff"), true));
+      });
+
+      document.querySelectorAll(".solo-diff-btn").forEach(btn => {
+        btn.addEventListener("click", () => applySoloDiff(btn.getAttribute("data-solo-diff"), true));
+      });
+
+      document.getElementById("chaosToggleBtn").addEventListener("click", () => {
+        state.chaosMode = !state.chaosMode;
+        saveState();
+        syncHUD();
+        if (state.chaosMode) triggerChaosPopup();
+      });
+
+      document.getElementById("dismissChaosBtn").addEventListener("click", () => {
+        document.getElementById("chaosPopup").classList.add("hidden");
+      });
+
+      document.getElementById("startFeedBtn").addEventListener("click", startFeedFromVeil);
+      document.getElementById("stopFeedBtn").addEventListener("click", stopFeedLoop);
+      document.getElementById("nextReelBtn").addEventListener("click", () => {
+        if (!feedLoopActive) {
+          startFeedFromVeil();
+          return;
+        }
+        feedRoundNum += 1;
+        loadFeedReel(pyPickNextFeedGame(state.recentGames));
+      });
+
+      const feedStage = document.getElementById("feedStageContainer");
+      const veilGlowOrb = document.getElementById("feedVeilGlowOrb");
+      feedStage.addEventListener("pointermove", (e) => {
+        const veil = document.getElementById("feedVeil");
+        if (!veilGlowOrb || veil.classList.contains("feed-veil-hidden")) return;
+        const rect = veil.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        veilGlowOrb.style.transform = `translate3d(${(x - 110).toFixed(1)}px, ${(y - 110).toFixed(1)}px, 0)`;
+      }, { passive: true });
+
+      document.querySelectorAll("[data-game-select]").forEach(card => {
+        card.addEventListener("click", () => {
+          launchSoloGame(card.getAttribute("data-game-select"));
+        });
+      });
+
+      document.getElementById("backToGamesBtn").addEventListener("click", openGamesGrid);
+      document.getElementById("soloRestartBtn").addEventListener("click", () => {
+        if (activeSoloGame) launchSoloGame(activeSoloGame);
+      });
+
+      document.getElementById("startSprintBtn").addEventListener("click", startSprint);
+      document.getElementById("restartSprintBtn").addEventListener("click", startSprint);
+
+      document.getElementById("saveScoreToBoardBtn").addEventListener("click", () => {
+        const input = document.getElementById("playerCallsignInput");
+        const callsign = (input.value || "YOU").trim().toUpperCase().slice(0, 16) || "YOU";
+        state.callsign = callsign;
+        const scoreToLog = state.bestScore > 0 ? state.bestScore : state.score;
+        if (scoreToLog <= 0) {
+          setStatus("Play a round first to earn points before logging to the board.");
+          return;
+        }
+        state.leaderboard = pyUpdateLeaderboard(state.leaderboard, {
+          name: callsign,
+          mode: sprintActive ? "60s Sprint" : (feedLoopActive ? "Feed" : "Solo"),
+          streak: state.bestStreak,
+          score: scoreToLog
+        });
+        saveState();
+        renderLeaderboard();
+        setStatus(`Logged ${scoreToLog.toLocaleString()} PTS for ${callsign}.`);
+      });
+
+      document.getElementById("exportCsvBtn").addEventListener("click", () => {
+        const csvContent = pyBuildSessionCsv();
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "unrot_cognitive_sessions.csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setStatus("Exported unrot_cognitive_sessions.csv");
+      });
+
+      document.getElementById("resetProgressBtn").addEventListener("click", () => {
+        state = createDefaultState();
+        saveState();
+        applyTheme(state.theme, false);
+        applyCoach(state.coach, false);
+        applyFeedDiff(state.feedDiff, false);
+        applySoloDiff(state.soloDiff, false);
+        renderAllPRBadges();
+        syncHUD();
+        renderBrainProfile();
+        renderLeaderboard();
+        setStatus("All local telemetry and PRs reset.");
+      });
+
+      document.addEventListener("keydown", (e) => {
+        const veil = document.getElementById("introVeil");
+        if (!veil.classList.contains("veil-dismissed")) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            document.getElementById("enterAppBtn").click();
+          }
+          return;
+        }
+
+        if (e.key === "Escape") {
+          const feedVisible = !document.getElementById("view-feed").classList.contains("hidden");
+          if (feedVisible && feedLoopActive) {
+            stopFeedLoop();
+          }
+          return;
+        }
+
+        if (["1", "2", "3", "4"].includes(e.key)) {
+          const idx = Number(e.key) - 1;
+          const visibleContainer = !document.getElementById("view-feed").classList.contains("hidden")
+            ? document.getElementById("feedCardMount")
+            : !document.getElementById("view-games").classList.contains("hidden")
+              ? document.getElementById("soloCardMount")
+              : !document.getElementById("view-sprint").classList.contains("hidden")
+                ? document.getElementById("sprintCardMount")
+                : null;
+          if (visibleContainer) {
+            const candidates = visibleContainer.querySelectorAll(".mc-btn, .stroop-opt, .herd-btn");
+            if (candidates[idx]) {
+              candidates[idx].click();
+            }
+          }
+        }
+      });
+
+      window.addEventListener("resize", () => syncAllLiquidPills(true));
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => syncAllLiquidPills(true));
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      applyTheme(state.theme, false);
+      applyCoach(state.coach, false);
+      applyFeedDiff(state.feedDiff, false);
+      applySoloDiff(state.soloDiff, false);
+      renderAllPRBadges();
+      syncHUD();
+      renderBrainProfile();
+      renderLeaderboard();
+      bindEvents();
+      requestAnimationFrame(() => syncAllLiquidPills(true));
+      initPythonEngine();
+    });
+  </script>
+</body>
+</html>
